@@ -26,8 +26,8 @@ abstract class BTree<E> extends LinkedTree<E> {
      */
     BTNode<E> furtherLeftElement() {
         //TODO: Left as an exercise.
-        return null
-    };
+        return null;
+    }
 
     /**
      * Return the further right node of the tree
