@@ -1,4 +1,7 @@
 package transportNetwork;
 
-public record Station(String name) {
+public interface Station {
+
+
+
 }

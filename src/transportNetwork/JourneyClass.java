@@ -4,11 +4,14 @@ import java.util.*;
 public class JourneyClass implements Journey{
 
     private String id;
-    private List<Stops> stopsSequence;
+    private ArrayList<Stops> stopsSequence; // array
 
     //todo: estrutura ordenada de stops?? sorted???
 
     public JourneyClass(String id){
         this.id = id;
+        stopsSequence = new ArrayList<>();
     }
+
+
 }
