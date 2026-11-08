@@ -2,15 +2,73 @@
  * Lenine Semedo 73327 & João Gonçalves 73439
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.PrimitiveIterator;
 import java.util.Scanner;
 import transportNetwork.*;
 public class Main {
-    public static void main(String[] args) {
+
+    private static String FILE_NAME = "data.txt";
+    private static String TRANSPORTATION_RESTORED_SUCESS = "Transportation network restored successfully.";
+    private static String TRANSPORTATION_NOT_FOUND = "Transportation network not found.";
+    private static String NO_LINE = "No line definition.";
+    private static String LOADDING_LINE=  "Loading line definition. <%d> stations loaded\n.";
+
+    //fixme: ficheiro
+    public static void main(String[] args) throws FileNotFoundException {
     Scanner in = new Scanner(System.in);
-    Network tn = new NetworkClass();
-    executeCommand(in,tn);
+    Network tn = null;
+
+    File file = new File(FILE_NAME);
+    if (file.exists()) {
+     //   tn = new NetworkClass().load(FILE_NAME);
+        System.out.println(TRANSPORTATION_RESTORED_SUCESS);
+
+    }
+
+    else if (args.length > 0) {
+        tn = readFile(args[0]);
+        // carregar do ficheiro
+
+    } else if (tn == null) {
+        System.out.println(NO_LINE);
+        return;
+    }
+        executeCommand(in,tn);
     in.close();
     }
+
+    //fixme: colequei algumas linhas como comentario somente para evitar erro, mas depois terminarei essa parte
+    private static Network readFile(String nameFile) throws FileNotFoundException {
+
+        File file = new File(nameFile);
+
+        if (!file.exists()) {
+            return null;
+        }
+        System.out.println(TRANSPORTATION_NOT_FOUND);
+
+        try (Scanner leitor = new Scanner(new FileReader(nameFile))){
+            Network tn = new NetworkClass();
+
+            int size = leitor.nextInt();
+           // leitor.nextLine();
+
+            for (int i = 0; i < size;i++ ){
+               String nameStation = leitor.nextLine().trim();
+            //   tn.addStation(nameStation); // TODO: classe sistema, responsavel por adicionar estações na SepChainHashTable e  ArrayClass
+            }
+
+            System.out.printf(LOADDING_LINE,size);
+             return  tn;
+
+        }catch (FileNotFoundException e){
+            return null;
+        }
+    }
+
 
     private enum Command {
         addJourney("addJourney: Inserts a new journey into the transportation network.\n"),
@@ -77,4 +135,15 @@ public class Main {
             processCommand(in,tn,command);
         }while(!command.equals(Command.quit));
     }
+
+    private static void addJourney(){
+
+    }
+
+
+
+
+
+
+
 }

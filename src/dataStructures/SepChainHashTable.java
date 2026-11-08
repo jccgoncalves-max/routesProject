@@ -44,7 +44,24 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
 
     private void rehash() {
         //TODO: Left as an exercise.
-        
+     Set<Entry<K,V>>[] oldTable = table;
+
+     table = createTable(table.length*FACTOR);
+        currentSize = 0;
+
+            // para percorer a tabela
+        for (int i = 0; i < oldTable.length; i++) {
+            Iterator<Entry<K, V>> it = oldTable[i].iterator();
+
+            while (it.hasNext()){
+                Entry<K,V> entry = it.next();
+                int index = hash(entry.key());
+                table[index].put(entry);
+                currentSize++;
+            }
+        }
+
+
     }
     // Returns the hash value of the specified key.
     int hash( K key ){
@@ -61,6 +78,15 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     @Override
     public V get(K key) {
         //TODO: Left as an exercise.
+
+        int index = hash(key);
+
+        Entry<K,V> tmp = new Entry<>(key,null);
+        Entry<K,V> entry = table[index].get(tmp);
+
+        if (entry != null){
+            return entry.value();
+        }
         return null;
     }
 
@@ -79,6 +105,25 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
         if (isFull())
             rehash();
         //TODO: Left as an exercise.
+
+        int index = hash(key);
+
+        Entry<K, V> newEntry = new Entry<>(key, value);
+
+        if (table[index].contains(newEntry)){
+            //Entry<K,V> oldEntry = table[index].get(newEntry);
+            table[index].replace(newEntry);
+         //   return oldEntry.value();
+
+            //fixme: essas linha como comentario é que vou chat que surgirio quando fui confirma se o meu codigo estava correto
+            // fixme: deixei para verificar depois, porque no slide da teorica o put não tem isso
+        }else{
+
+            table[index].put(newEntry);
+            currentSize ++;
+
+        }
+
         return null;
     }
 
@@ -95,6 +140,19 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     @Override
     public V remove(K key) {
         //TODO: Left as an exercise.
+
+        int index = hash(key);
+        Entry<K,V> tmp = new Entry<>(key,null);
+
+        if (table[index].contains(tmp)){
+            Entry<K,V> entryRemove = table[index].get(tmp);
+            table[index].remove(tmp);
+            currentSize --;
+
+            return entryRemove.value();
+        }
+
+
         return null;
     }
 
@@ -111,11 +169,20 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     void writeData(ObjectOutputStream oos)
             throws IOException {
         //TODO: Left as an exercise.
+        oos.writeInt(table.length);
     }
 
     void readData(ObjectInputStream ios)
             throws IOException, ClassNotFoundException {
-        //TODO: Left as an exercise.
+             //TODO: Left as an exercise.
+        //fixme:
+        //Lê a dimensão do vetor guardada no ficheiro
+        int capacity = ios.readInt();
+        // Aloca o vetor e inicializa cada posição com um SetLinkedList vazio
+        table = (Set<Entry<K,V>>[]) new Set[capacity];
+        for (int i = 0; i < capacity; i++) {
+            table[i] = new SetLinkedList<>();
+        }
     }
    
 }

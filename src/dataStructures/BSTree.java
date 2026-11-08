@@ -89,6 +89,19 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      */
     public V put(K key, V value) {
         //TODO: Left as an exercise.
+
+        Entry<K,V> elem = new Entry<>(key,value);
+
+        if (isEmpty()) {
+            root = new BTNode<>(elem);
+            currentSize ++;
+        }
+
+        tri<K,V> result =
+
+
+
+
         return null;
     }
 

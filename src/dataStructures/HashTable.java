@@ -2,6 +2,7 @@ package dataStructures;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 
 /**
  * Hash Table
@@ -34,7 +35,13 @@ import java.io.ObjectOutputStream;
      // than Integer.MAX VALUE.
      protected static int nextPrime( int number ){
          //TODO: Left as exercise
-        
+
+         for (int i = 0; i < PRIMES.length; i++){
+             if (PRIMES[i] >= number)
+                 return PRIMES[i];
+         }
+
+         return 0;
      }
      protected static final int[]
              PRIMES={11, 17, 19, 31, 47, 73,
