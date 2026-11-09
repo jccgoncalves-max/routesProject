@@ -29,11 +29,12 @@ public class FilterIterator<E> implements Iterator<E> {
      * @param it to be iterated
      * @param criterion filter
      */
-    public FilterIterator(Iterator<E> it, Predicate<E> criterion) {
+    public FilterIterator(Iterator<E> it, Predicate<E> criterion, Iterator<E> iterator, Predicate<E> filter) {
         //TODO: Left as an exercise.
-        
+        this.iterator = iterator;
+        this.filter = filter;
     }
-    
+
     /**
      * Returns true if next would return an element
      *
@@ -49,7 +50,8 @@ public class FilterIterator<E> implements Iterator<E> {
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E next() {
-        //TODO: Left as an exercise.   
+        //TODO: Left as an exercise.
+        return null;
     }
     /**
      * Restarts the iteration.

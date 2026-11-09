@@ -163,7 +163,8 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return new SepChainHTIterator<>(table);
+       // return new SepChainHTIterator<>(table);
+        return null;
     }
 
     void writeData(ObjectOutputStream oos)

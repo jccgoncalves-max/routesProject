@@ -1,21 +1,34 @@
 package transportNetwork;
+import java.util.*;
 
-import dataStructures.*;
-
-import java.util.List;
-
+/**
+ * Represents a station on the line.
+ */
 public class StationClass implements Station {
+    /**
+     * Station unique name
+     */
+    private String name ;
+    /**
+     * Station position on the line
+     */
+   // private int linePosition;
+    /**
+     * Tree of stations ordered by hour
+     */
+    private SortedMap<String,Journey> stationsOrderedByHour;
 
-    private String name;
-    private BSTree<String, List<Journey>> stopsByTime;
-
-public StationClass(String name){
-
-    this.name = name;
-    this.stopsByTime = new BSTree<>(); //TODO usar comparador
-
-
-
-
+    /**
+     * Station Constructor
+     * @param name Station unique name
+     //* @param linePosition Station line position
+     */
+    public StationClass(String name) {
+        this.name = name;
+        //this.linePosition = linePosition;
+        stationsOrderedByHour = new TreeMap<>();
     }
+
 }
+
+

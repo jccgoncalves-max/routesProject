@@ -12,6 +12,20 @@ import dataStructures.Map;
 
 // se ficar com duvida nessa classe eu explico
 class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    @Override
+    public Map.Entry<K, V> next() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public void rewind() {
+
+    }
 
     private Set<Map.Entry<K,V>>[] table;
     private int current;

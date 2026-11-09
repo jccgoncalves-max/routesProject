@@ -10,5 +10,19 @@ import dataStructures.exceptions.NoSuchElementException;
  */
 
 class BreadthIterator<E> implements Iterator<E> {
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    @Override
+    public E next() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public void rewind() {
+
+    }
     //TODO: Left as an exercise.
 }

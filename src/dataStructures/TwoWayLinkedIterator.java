@@ -32,6 +32,21 @@ class TwoWayLinkedIterator<E> extends LinkedIterator<E>
         lastNode=last;
     }
 
+    @Override
+    public boolean hasPrevious() {
+        return false;
+    }
+
+    @Override
+    public E previous() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public void fullForward() {
+
+    }
+
     //TODO: Left as an exercise.
     
 

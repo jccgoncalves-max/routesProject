@@ -1,23 +1,57 @@
 package transportNetwork;
-import dataStructures.ArrayClass;
 
 import java.util.*;
-public class NetworkClass implements Network{
-    private Map<String,Station> stationCollection;
-    private Map<String,List<Journey>> journeyCollection; // key: estação
-    private ArrayList<Station> lineOrder; // usado na serialização
-    //todo: estrutura que contem todas as estações do programa
-    //todo: mapa que contem todas as journey do programa: mapa que contem lista de journeys
-    //todo: Estrutura com linhas que representa sequência ordenada de estações
 
-    //todo: implementar dois comparadores: findJournery e o minimo;
+/**
+ *  Represents trains transportations
+ */
+public class NetworkClass implements Network{
+    /**
+     * Sequence of stations
+     */
+    private Map<String,Station> line;
+    /**
+     * Collection of journeys
+     */
+    private Map<String,Journey> journeys;//todo: HashMap vai devolver um iterador que percorre por ordem(para serialização);
+    /**
+     * Structure to serialize the train station.
+     */
+    private List<Station> serializedLine;
+
 
     /**
-     * Transport Network constructor
+     * Train Network constructor
      */
     public NetworkClass(){
-        stationCollection = new HashMap<>(20);
-        journeyCollection = new HashMap<>(50);
-        lineOrder = new ArrayList<>();
+     journeys = new HashMap<>(20);
+     line = new HashMap<>(20);
+     serializedLine = new LinkedList<>();
+
+    }
+
+    @Override
+    public void addJourney(String journeyId){
+            // Cria a nova Journey
+            Journey newJourney = new JourneyClass(journeyId);
+            journeys.put(journeyId,newJourney);
+    }
+
+    @Override
+    public boolean hasJourney(String id){
+        return journeys.containsKey(id);
+    }
+
+
+    @Override
+    public void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime) {
+        // get a journey
+        Journey journey = journeys.get(journeyId);
+        //Adicionei a estção na linha
+        Station station = new StationClass(stationName);
+        line.put(stationName,station);
+        // Adicionei o stop na journey
+        Stops stop = new StopClass(station,journey,departureTime,arrivalTime);
+        journey.addStop(stop);
     }
 }

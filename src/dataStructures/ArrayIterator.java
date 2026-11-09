@@ -15,5 +15,35 @@ public class ArrayIterator<T> implements TwoWayIterator<T> {
 		this.counter = counter;
 		rewind();
 	}
+
+	@Override
+	public boolean hasPrevious() {
+		return false;
+	}
+
+	@Override
+	public T previous() throws NoSuchElementException {
+		return null;
+	}
+
+	@Override
+	public void fullForward() {
+
+	}
+
+	@Override
+	public boolean hasNext() {
+		return false;
+	}
+
+	@Override
+	public T next() throws NoSuchElementException {
+		return null;
+	}
+
+	@Override
+	public void rewind() {
+
+	}
 	//TODO: Left as an exercise.
 }

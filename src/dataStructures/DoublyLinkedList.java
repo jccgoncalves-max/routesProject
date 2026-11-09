@@ -59,6 +59,7 @@ public class DoublyLinkedList<E> extends SequenceLinkedList<E> implements TwoWay
      */
     public E removeFirst( ) {
        //TODO: Left as an exercise.
+        return null;
     }
 
     

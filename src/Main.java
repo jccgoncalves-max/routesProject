@@ -1,27 +1,32 @@
 /**
- * Lenine Semedo 73327 & João Gonçalves 73439
+ * Lenine Semedo 73327 & João Gonçalves 73439  daasaaddasda
  */
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.PrimitiveIterator;
 import java.util.Scanner;
 import transportNetwork.*;
+import dataStructures.exceptions.*;
 public class Main {
 
     private static String FILE_NAME = "data.txt";
     private static String TRANSPORTATION_RESTORED_SUCESS = "Transportation network restored successfully.";
     private static String TRANSPORTATION_NOT_FOUND = "Transportation network not found.";
     private static String NO_LINE = "No line definition.";
-    private static String LOADDING_LINE=  "Loading line definition. <%d> stations loaded\n.";
+    private static String LOADDING_LINE = "Loading line definition. <%d> stations loaded\n.";
+    private static String JOURNEY_ALREADY_EXISTS_MSG = "Journey already exists.";
+    private static String JOURNEY_SUCCESSFULLY_ADDED_MSG = "Journey successfully added.";
 
     //fixme: ficheiro
     public static void main(String[] args) throws FileNotFoundException {
-    Scanner in = new Scanner(System.in);
-    Network tn = null;
-
+        Scanner in = new Scanner(System.in);
+        Network tn = new NetworkClass();
+        executeCommand(in, tn);
+        in.close();
+    /*
     File file = new File(FILE_NAME);
+
     if (file.exists()) {
      //   tn = new NetworkClass().load(FILE_NAME);
         System.out.println(TRANSPORTATION_RESTORED_SUCESS);
@@ -37,9 +42,10 @@ public class Main {
         return;
     }
         executeCommand(in,tn);
-    in.close();
-    }
 
+     */
+    }
+/*
     //fixme: colequei algumas linhas como comentario somente para evitar erro, mas depois terminarei essa parte
     private static Network readFile(String nameFile) throws FileNotFoundException {
 
@@ -69,7 +75,12 @@ public class Main {
         }
     }
 
+ */
 
+
+    /**
+     * Contains all enum
+     */
     private enum Command {
         addJourney("addJourney: Inserts a new journey into the transportation network.\n"),
         findJourney("findJourney: Finds the earliest journey that allows a passenger to travel from one station to another.\n"),
@@ -80,15 +91,16 @@ public class Main {
 
         private String msg;
 
-        Command (String msg){
+        Command(String msg) {
             this.msg = msg;
         }
 
-        String getMsg(){
+        String getMsg() {
             return this.msg;
         }
-        private void executeHelp(){
-            for(int i = 0 ; i<Command.values().length;i++){
+
+        private void executeHelp() {
+            for (int i = 0; i < Command.values().length; i++) {
                 System.out.println(Command.values()[i].getMsg());
             }
         }
@@ -96,14 +108,15 @@ public class Main {
 
     /**
      * Returns command
+     *
      * @param in Scanner input
      * @return Command
      */
-    private static Command getCommand (Scanner in){
+    private static Command getCommand(Scanner in) {
         String cmd = in.nextLine().trim();
         Command finalCmd = null;
-        for(int i = 0;i<Command.values().length;i++){
-            if(Command.values()[i].toString().equalsIgnoreCase(cmd))
+        for (int i = 0; i < Command.values().length; i++) {
+            if (Command.values()[i].toString().equalsIgnoreCase(cmd))
                 finalCmd = Command.values()[i];
         }
         return finalCmd;
@@ -112,38 +125,75 @@ public class Main {
 
     /**
      * Processes command interpreter.
-     * @param in Scanner input
-     * @param tn Transport Network App
+     *
+     * @param in      Scanner input
+     * @param tn      Transport Network App
      * @param command command
      */
-    private static void processCommand(Scanner in, Network tn, Command command){
-        switch(command){
+    private static void processCommand(Scanner in, Network tn, Command command) {
+        switch (command) {
+            case addJourney -> addJourneyCmd(in, tn);
             case help -> command.executeHelp();
         }
-
     }
 
     /**
      * Executes command interpreter.
+     *
      * @param in Scanner input
      * @param tn Transport Network
      */
-    private static void executeCommand(Scanner in, Network tn){
+    private static void executeCommand(Scanner in, Network tn) {
         Command command;
-        do{
+        do {
             command = getCommand(in);
-            processCommand(in,tn,command);
-        }while(!command.equals(Command.quit));
+            processCommand(in, tn, command);
+        } while (!command.equals(Command.quit));
     }
 
-    private static void addJourney(){
-
+    /**
+     * Inserts a new journey into the transportation network.
+     *
+     * @param in Scanner input
+     * @param tn Transport Network
+     */
+    private static void addJourneyCmd(Scanner in, Network tn) {
+        String journeyId = in.nextLine();
+        int nStops = in.nextInt();
+        in.nextLine();
+        boolean exists = tn.hasJourney(journeyId);
+        if (exists) {
+            for (int i = 0; i < nStops; i++) {
+                in.nextLine();
+                if (i == 0) {
+                    in.nextLine();
+                } else if (i == nStops - 1) {
+                    in.nextLine();
+                } else {
+                    in.nextLine();
+                    in.nextLine();
+                }
+                System.out.println(JOURNEY_ALREADY_EXISTS_MSG);
+            }
+        }
+        else{
+                tn.addJourney(journeyId);
+                for (int i = 0; i < nStops; i++) {
+                    String stationName = in.nextLine();
+                    String departureTime = null;
+                    String arrivalTime = null;
+                    if (i == 0) {
+                        departureTime = in.nextLine();
+                    } else if (i == nStops - 1) {
+                        arrivalTime = in.nextLine();
+                    } else {
+                        arrivalTime = in.nextLine();
+                        departureTime = in.nextLine();
+                    }
+                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime);
+                }
+                System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
+            }
+        }
     }
 
-
-
-
-
-
-
-}

@@ -34,5 +34,75 @@ public class ArrayClass<E> implements TwoWayList<E> {
         elems = (E[]) new Object[dimension];
         counter = 0;
     }
+
+    @Override
+    public TwoWayIterator<E> twoWayiterator() {
+        return null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return null;
+    }
+
+    @Override
+    public E getFirst() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E getLast() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E get(int position) throws InvalidPositionException {
+        return null;
+    }
+
+    @Override
+    public int indexOf(E element) {
+        return 0;
+    }
+
+    @Override
+    public void addFirst(E element) {
+
+    }
+
+    @Override
+    public void addLast(E element) {
+
+    }
+
+    @Override
+    public void add(int position, E element) throws InvalidPositionException {
+
+    }
+
+    @Override
+    public E removeFirst() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E removeLast() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E remove(int position) throws InvalidPositionException {
+        return null;
+    }
     //TODO: Left as an exercise.
 }

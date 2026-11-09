@@ -97,7 +97,7 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
             currentSize ++;
         }
 
-        tri<K,V> result =
+   //     tri<K,V> result =
 
 
 
@@ -130,7 +130,8 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
 
     //Manual Serialization
     Iterator<Entry<K, V>> iteratorLevel() {
-        return new BreadthIterator<>((BTNode<Entry<K,V>>)root);
+//        return new BreadthIterator<>((BTNode<Entry<K,V>>)root);
+        return null;
     }
 
     void addElem(Entry<K, V> element) {
