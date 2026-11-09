@@ -10,22 +10,13 @@ import dataStructures.Map;
  * @param <V> Generic Value
  */
 
-// se ficar com duvida nessa classe eu explico
+/**
+ * funcionamento da classe: aqui temos iteradores por niveis o primeiro para percorer a tabela
+ * o segundo para percorer a lista da tabela.
+ *
+ *
+ */
 class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
-    @Override
-    public boolean hasNext() {
-        return false;
-    }
-
-    @Override
-    public Map.Entry<K, V> next() throws NoSuchElementException {
-        return null;
-    }
-
-    @Override
-    public void rewind() {
-
-    }
 
     private Set<Map.Entry<K,V>>[] table;
     private int current;
@@ -43,7 +34,7 @@ class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
 
     @Override
     public Map.Entry<K, V> next() throws NoSuchElementException {
-       //fixme: terminar depois
+
 
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -68,6 +59,7 @@ class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
     //metodo auxiliar
  private void advanceToNextPosTable(){
 
+        // aqui devolve um iterador para a posição da tabela
      while (current < table.length){
          Iterator<Map.Entry<K,V>> it = table[current].iterator();
          if (it.hasNext()){

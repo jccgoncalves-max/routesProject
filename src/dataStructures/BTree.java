@@ -26,7 +26,17 @@ abstract class BTree<E> extends LinkedTree<E> {
      */
     BTNode<E> furtherLeftElement() {
         //TODO: Left as an exercise.
-        return null;
+        if( root == null)
+            return null;
+
+        BTNode<E> current = (BTNode<E>) root;
+
+        while (current.getLeftChild() != null){
+            current = (BTNode<E>) current.getLeftChild();
+        }
+
+        return current;
+
     }
 
     /**
@@ -35,7 +45,17 @@ abstract class BTree<E> extends LinkedTree<E> {
      */
     BTNode<E> furtherRightElement() {
         //TODO: Left as an exercise.
-        return null;
+        if (root == null)
+            return null;
+
+        BTNode<E> current = (BTNode<E>) root;
+
+        while (current.getRightChild() != null){
+            current = (BTNode<E>) current.getRightChild();
+        }
+
+        return  current;
+
     }
 
 }
