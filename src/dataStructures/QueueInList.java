@@ -13,28 +13,35 @@ public class QueueInList<E> implements Queue<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return list.isEmpty();
     }
 
     @Override
     public int size() {
-        return 0;
+        return list.size();
     }
 
     @Override
     public void enqueue(E element) {
+        list.addLast(element);
 
     }
 
     @Override
-    public E peek() {
-        return null;
+    public E peek()throws EmptyQueueException {
+        if (isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        return list.getFirst();
     }
 
     @Override
-    public E dequeue() {
-        return null;
+    public E dequeue()throws EmptyQueueException {
+        if (isEmpty()) {
+            throw new EmptyQueueException();
+        }
+        return list.removeFirst();
     }
 
-    //TODO: Left as an exercise.
+
 }

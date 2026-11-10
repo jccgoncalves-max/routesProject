@@ -63,6 +63,37 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
         return furtherRightElement().getElement();
     }
 
+    record tri<K,V>(
+            BTNode<Entry<K,V>> parent,
+            BTNode<Entry<K,V>> node,
+            int cmp
+    ){}
+
+    tri<K,V> find(K key){
+
+        BTNode<Entry<K,V>> current = (BTNode<Entry<K, V>>) root;
+        BTNode<Entry<K,V>> parent = null;
+        int cmp = 0;
+
+        while (current != null){
+
+            cmp = comparator.compare(key,current.getElement().key());
+
+            if (cmp == 0){
+                return new tri<>(parent,current,cmp);
+            }
+            parent = current;
+            if (cmp < 0){
+                current = (BTNode<Entry<K, V>>) current.getLeftChild();
+
+            }else{
+                current= (BTNode<Entry<K, V>>) current.getRightChild();
+            }
+        }
+
+        return new tri<>(parent,null,cmp);
+    }
+
     /**
      * If there is an entry in the dictionary whose key is the specified key,
      * returns its value; otherwise, returns null.
@@ -73,7 +104,12 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      */
     public V get(K key) {
         //TODO: Left as an exercise.
-        return null;
+        tri<K,V> triple = find(key);
+
+        if (triple.node == null)
+            return null;
+
+        return triple.node().getElement().value();
     }
 
     
@@ -90,17 +126,27 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
     public V put(K key, V value) {
         //TODO: Left as an exercise.
 
-        Entry<K,V> elem = new Entry<>(key,value);
+        tri<K,V> triple = find(key);
 
-        if (isEmpty()) {
-            root = new BTNode<>(elem);
-            currentSize ++;
+        if (triple.node() != null){
+            V oldValue = triple.node().getElement().value();
+
+            triple.node().setElement(new Entry<>(key,value));
+            return oldValue;
+        }
+        if (triple.parent == null) {
+            root = new BTNode<>(new Entry<>(key, value));
+
+        }else{
+            BTNode<Entry<K,V>> newNode = new BTNode<>(new Entry<>(key,value),triple.parent());
+
+            if (triple.cmp < 0)
+                triple.parent().setLeftChild(newNode);
+            else
+                triple.parent().setRightChild(newNode);
         }
 
-   //     tri<K,V> result =
-
-
-
+        currentSize++;
 
         return null;
     }
@@ -116,6 +162,66 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      */
     public V remove(K key) {
         //TODO: Left as an exercise.
+
+        tri<K,V> triple = find(key);
+
+        if (triple.node() == null) {
+            return null;
+        }
+
+        V oldNode = triple.node().getElement().value();
+        //caso 1
+        if (triple.node().getRightChild() == null && triple.node().getLeftChild() == null){
+
+            if (triple.parent() == null){
+                root = null;
+
+            }else {
+                if (triple.cmp() < 0)
+                    triple.parent().setLeftChild(null);
+                else
+                    triple.parent().setRightChild(null);
+            }
+            currentSize --;
+            return oldNode;
+        }
+        // caso 2
+        if (triple.node().getRightChild() == null || triple.node().getLeftChild() == null) {
+
+            BTNode<Entry<K, V>> child = (BTNode<Entry<K, V>>) triple.node().getLeftChild();
+            if (child == null) {
+                child = (BTNode<Entry<K, V>>) triple.node().getRightChild();
+            }
+
+            if (triple.parent() == null) {
+                root = child;
+
+            } else {
+                if (triple.cmp() < 0) {
+                    triple.parent().setLeftChild(child);
+
+                } else {
+                    triple.parent().setRightChild(child);
+                }
+            }
+            currentSize--;
+            return oldNode;
+        }
+        //caso 3
+        if (triple.node().getLeftChild() != null && triple.node().getRightChild() != null){
+
+            BTNode<Entry<K,V>> nodeLeft = (BTNode<Entry<K, V>>) triple.node().getLeftChild();
+            BTNode<Entry<K,V>> nodeRight = nodeLeft.furtherRightElement();
+
+            remove(nodeRight.getElement().key());
+
+            triple.node().setElement(nodeRight.getElement());
+
+            return oldNode;
+
+
+        }
+
         return null;
     }
 

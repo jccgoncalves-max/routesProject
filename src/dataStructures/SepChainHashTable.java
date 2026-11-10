@@ -111,12 +111,10 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
         Entry<K, V> newEntry = new Entry<>(key, value);
 
         if (table[index].contains(newEntry)){
-            //Entry<K,V> oldEntry = table[index].get(newEntry);
+            Entry<K,V> oldEntry = table[index].get(newEntry);
             table[index].replace(newEntry);
-         //   return oldEntry.value();
+           return oldEntry.value();
 
-            //fixme: essas linha como comentario é que vou chat que surgirio quando fui confirma se o meu codigo estava correto
-            // fixme: deixei para verificar depois, porque no slide da teorica o put não tem isso
         }else{
 
             table[index].put(newEntry);
