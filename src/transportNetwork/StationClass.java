@@ -38,13 +38,13 @@ public class StationClass implements Station {
         for(Map.Entry<LocalTime, List<Journey>> e : stationsOrderedByHour.tailMap(passengerTime).entrySet()){
             for(Journey j : e.getValue()){
                 if(j.getArrivalStation().getStation().getName().equalsIgnoreCase(arrivalStation))
+                    /*
                     j.setJourneyTicket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
                             j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime());
                 return j.getJourneyTicket();
-                    /*
+                     */
                     return new Ticket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
                             j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime());
-                     */
             }
         }
         return null;

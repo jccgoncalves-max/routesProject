@@ -6,13 +6,14 @@ import dataStructures.exceptions.InvalidTimeFormatException;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 import java.time.*;
 /**
  *  Represents trains transportations
  */
 public class NetworkClass implements Network{
-    private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm");
+    private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
     /**
      * Sequence of stations
      */
@@ -38,47 +39,57 @@ public class NetworkClass implements Network{
     }
 
     @Override
-    public void addJourney(String journeyId){
-            Journey newJourney = new JourneyClass(journeyId);
-            journeys.put(journeyId.toLowerCase(),newJourney);
-    }
-
-    @Override
     public boolean hasJourney(String id){
         return journeys.containsKey(id.toLowerCase());
     }
 
 
     @Override
-    public void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime,int position) {
-        Journey journey = journeys.get(journeyId.toLowerCase());
-        Station station = new StationClass(stationName,position);
-        station.addDeparture(getLocalTime(departureTime),journey);
-        line.put(stationName.toLowerCase(),station);
-        Stops stop = new StopClass(station,journey,getLocalTime(departureTime),getLocalTime(arrivalTime));
-        journey.addStop(stop);
+    public void addJourney(String journeyId, String[] stationsName, String[] departures, String[] arrivals) {
+        Journey journey = new JourneyClass(journeyId);
+        journeys.put(journeyId.toLowerCase(),journey);
+
+        for(int i = 0; i< stationsName.length;i++){
+            Station station = line.get(stationsName[i].toLowerCase());
+
+            if(station==null) {
+                station = new StationClass(stationsName[i], i);
+                line.put(stationsName[i].toLowerCase(), station);
+            }
+
+            LocalTime departureTime = getLocalTime(departures[i]);
+            LocalTime arrivalTime = getLocalTime(arrivals[i]);
+
+            if(departureTime!= null)
+                station.addDeparture(departureTime,journey);
+
+            Stops stop = new StopClass(station, journey, departureTime, arrivalTime);
+            journey.addStop(stop);
+        }
+
     }
 
 
     @Override
     public Ticket findJourney(String departureStation, String arrivalStation, String passengerTime) throws InvalidStationException,
             InvalidTimeFormatException, InvalidStationOrderException {
-        if(!line.containsKey(departureStation)||!line.containsKey(arrivalStation))
+        if(!line.containsKey(departureStation.toLowerCase())||!line.containsKey(arrivalStation.toLowerCase()))
             throw new InvalidStationException();
+
         LocalTime time = getLocalTime(passengerTime);
         if(time == null)
             throw new InvalidTimeFormatException();
-        if(line.get(departureStation.toLowerCase()).getLinePosition()>line.get(arrivalStation.toLowerCase()).getLinePosition())
+
+        if(line.get(departureStation.toLowerCase()).getLinePosition()>=line.get(arrivalStation.toLowerCase()).getLinePosition())
             throw new InvalidStationException();
+
         Station station = line.get(departureStation.toLowerCase());
         return station.getSuitableJourney(arrivalStation,time);
     }
-    /**
-     * Converts String to desired LocalTime format
-     * @param time time
-     * @return LocalTime object
-     */
+
     private LocalTime getLocalTime(String time){
+        if (time == null)
+            return null;
         try{
             return LocalTime.parse(time,TIME_FORMAT);
         }catch(DateTimeParseException e) {

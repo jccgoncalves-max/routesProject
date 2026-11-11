@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.util.Scanner;
 import transportNetwork.*;
 import dataStructures.exceptions.*;
+import java.util.*;
 public class Main {
 
     private static String FILE_NAME = "data.txt";
@@ -171,38 +172,34 @@ public class Main {
         int nStops = in.nextInt();
         in.nextLine();
         boolean exists = tn.hasJourney(journeyId);
-        if (exists) {
-            for (int i = 0; i < nStops; i++) {
-                in.nextLine();
-                if (i == 0) {
-                    in.nextLine();
-                } else if (i == nStops - 1) {
-                    in.nextLine();
-                } else {
-                    in.nextLine();
-                    in.nextLine();
-                }
-                System.out.println(JOURNEY_ALREADY_EXISTS_MSG);
+
+        String[] stationsName = new String[nStops];
+        String[] departures = new String[nStops];
+        String[] arrivals = new String[nStops];
+        for(int i = 0; i<nStops;i++){
+            String stationName = in.nextLine();
+            String departureTime = null;
+            String arrivalTime = null;
+            if(i==0){
+                departureTime = in.nextLine();
+            } else if (i== nStops-1) {
+                arrivalTime = in.nextLine();
+            }else{
+                departureTime = in.nextLine();
+                arrivalTime = in.nextLine();
             }
+            stationsName[i] = stationName;
+            departures[i] = departureTime;
+            arrivals[i] = arrivalTime;
+        }
+
+        if (exists) {
+            System.out.println(JOURNEY_ALREADY_EXISTS_MSG);
         }
         else{
-                tn.addJourney(journeyId);
-                for (int i = 0; i < nStops; i++) {
-                    String stationName = in.nextLine();
-                    String departureTime = null;
-                    String arrivalTime = null;
-                    if (i == 0) {
-                        departureTime = in.nextLine();
-                    } else if (i == nStops - 1) {
-                        arrivalTime = in.nextLine();
-                    } else {
-                        arrivalTime = in.nextLine();
-                        departureTime = in.nextLine();
-                    }
-                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime,i);
-                }
-            }
-        System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
+            tn.addJourney(journeyId,stationsName,departures,arrivals);
+            System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
+        }
     }
 
     /**
@@ -211,7 +208,7 @@ public class Main {
      * @param in Scanner in
      * @param tn Transport network app
      */
-    private static void findJourneyCmd(Scanner in, Network tn) {
+    private static void findJourneyCmd(Scanner in, Network tn) {//fixme: devolve o mesmo tickey (1º findJourney) para os restos dos casos
         try {
             String departureStation = in.nextLine();
             String arrivalStation = in.nextLine();
@@ -220,9 +217,10 @@ public class Main {
             if(suitableJourney!=null){
                 System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
                 System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//todo: testar output
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//fixme: deve retornar de forma normalizasa
+                //fixme: eg: input = "london" output = "London"
                 System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
-                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());//todo: testar output
+                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
             }else{
                 System.out.println(NO_SUITABLE_JOURNEY_MSG);
             }

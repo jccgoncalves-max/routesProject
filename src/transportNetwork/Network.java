@@ -2,11 +2,7 @@ package transportNetwork;
 
 
 public interface Network {
-    /**
-     * Adds Journey into the transportation network system.
-     * @param journeyId
-     */
-    void addJourney(String journeyId);
+
 
     /**
      * Checks if journey with given id already exist
@@ -17,12 +13,13 @@ public interface Network {
 
     /**
      * Adds stops onto a journey with given id
+     *
      * @param journeyId
-     * @param stationName
-     * @param departureTime
-     * @param arrivalTime
+     * @param stationsName
+     * @param departures
+     * @param arrivals
      */
-    void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime,int position);
+    void addJourney(String journeyId, String[] stationsName, String[] departures, String[] arrivals);
 
 
     /**
