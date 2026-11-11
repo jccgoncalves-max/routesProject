@@ -55,3 +55,5 @@ public class NetworkClass implements Network{
         journey.addStop(stop);
     }
 }
+
+// tick - vai ter a linha a estação de partida com a hora e a chegada com a hora
