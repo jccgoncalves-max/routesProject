@@ -1,4 +1,7 @@
 package transportNetwork;
+
+import java.time.LocalTime;
+
 /**
  * Represents each stop of a Journey.
  */
@@ -15,12 +18,12 @@ public class StopClass implements Stops {
     /**
      * Departure time
      */
-    private String departureTime;
+    private LocalTime departureTime;
 
     /**
      * Arrival time
      */
-    private String arrivalTime;
+    private LocalTime arrivalTime;
 
     /**
      * StopClass Constructor
@@ -28,10 +31,27 @@ public class StopClass implements Stops {
      * @param departureTime Stop departure time
      * @param arrivalTime Stop arrival time
      */
-    public StopClass(Station station,Journey journey,String departureTime, String arrivalTime){
+    public StopClass(Station station,Journey journey,LocalTime departureTime, LocalTime arrivalTime){
         this.station = station;
         this.journey = journey;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
+    }
+
+    @Override
+    public Station getStation() {
+            return station;
+    }
+    @Override
+    public Journey getJourney() {
+        return journey;
+    }
+    @Override
+    public LocalTime getDepartureTime() {
+        return departureTime;
+    }
+    @Override
+    public LocalTime getArrivalTime() {
+        return arrivalTime;
     }
 }

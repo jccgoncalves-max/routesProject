@@ -23,4 +23,13 @@ public interface Network {
      * @param arrivalTime
      */
     void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime);
+
+    /**
+     * Chekc if journey is suitable for passenger
+     * @param departureStation
+     * @param arrivalStation
+     * @param passengerTime
+     * @return true if its suitable
+     */
+    boolean isJourneySuitable(String departureStation, String arrivalStation, String passengerTime);
 }

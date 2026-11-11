@@ -6,4 +6,12 @@ public interface Journey {
      * @param newStop
      */
     void addStop(Stops newStop);
+
+    String getId();
+
+    /**
+     * Returns Journey ticket
+     * @return Journey ticket
+     */
+    Ticket getJourneyTicket();
 }

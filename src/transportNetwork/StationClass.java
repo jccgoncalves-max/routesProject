@@ -1,6 +1,6 @@
 package transportNetwork;
+import java.time.*;
 import java.util.*;
-
 /**
  * Represents a station on the line.
  */
@@ -16,7 +16,7 @@ public class StationClass implements Station {
     /**
      * Tree of stations ordered by hour
      */
-    private SortedMap<String,Journey> stationsOrderedByHour;
+    private SortedMap<LocalTime,List<Journey>>stationsOrderedByHour;
 
     /**
      * Station Constructor
@@ -29,6 +29,11 @@ public class StationClass implements Station {
         stationsOrderedByHour = new TreeMap<>();
     }
 
+
+    @Override
+    public void getSuitableJourney(String arrivalStation, LocalTime passengerTime) {
+
+    }
 }
 
 

@@ -1,11 +1,14 @@
 package transportNetwork;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-
+import java.time.*;
 /**
  *  Represents trains transportations
  */
 public class NetworkClass implements Network{
+    private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm");
     /**
      * Sequence of stations
      */
@@ -32,26 +35,42 @@ public class NetworkClass implements Network{
 
     @Override
     public void addJourney(String journeyId){
-            // Cria a nova Journey
             Journey newJourney = new JourneyClass(journeyId);
-            journeys.put(journeyId,newJourney);
+            journeys.put(journeyId.toLowerCase(),newJourney);
     }
 
     @Override
     public boolean hasJourney(String id){
-        return journeys.containsKey(id);
+        return journeys.containsKey(id.toLowerCase());
     }
 
 
     @Override
     public void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime) {
-        // get a journey
-        Journey journey = journeys.get(journeyId);
-        //Adicionei a estção na linha
+        Journey journey = journeys.get(journeyId.toLowerCase());//todo: confirmar se todo acesso deve ser lowercase??
         Station station = new StationClass(stationName);
-        line.put(stationName,station);
-        // Adicionei o stop na journey
-        Stops stop = new StopClass(station,journey,departureTime,arrivalTime);
+        line.put(stationName.toLowerCase(),station);
+        Stops stop = new StopClass(station,journey,getLocalTime(departureTime),getLocalTime(arrivalTime));//aqui ja adiciona as referências de station e journy
         journey.addStop(stop);
+    }
+
+    @Override
+    public boolean isJourneySuitable(String departureStation, String arrivalStation, String passengerTime) {
+        Station station = line.get(departureStation);
+        station.getSuitableJourney(arrivalStation,getLocalTime(passengerTime));
+        return false;
+    }
+
+    /**
+     * Converts String to desired LocalTime format
+     * @param time time
+     * @return LocalTime object
+     */
+    private LocalTime getLocalTime(String time){
+        try{
+            return LocalTime.parse(time,TIME_FORMAT);
+        }catch(DateTimeParseException e) {
+            return null;
+        }
     }
 }
