@@ -66,7 +66,51 @@ public class JourneyClass implements Journey{
      * Sets Journey ticket
      */
     @Override
-    public void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime){
-        journeyTicket = new Ticket(journey,departure,departureTime,arrival,arrivalTime);
+    public void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime, int stopCount){
+        journeyTicket = new Ticket(journey,departure,departureTime,arrival,arrivalTime,stopCount);
+    }
+
+    @Override
+    public void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime) {
+        setJourneyTicket(journey, departure, departureTime, arrival, arrivalTime, 0);
+    }
+
+    @Override
+    public Stops getStopAt(String stationName) {
+        if (stationName == null) {
+            return null;
+        }
+        for (Stops stop : stopsSequence) {
+            if (stop.getStation().getName().equalsIgnoreCase(stationName)) {
+                return stop;
+            }
+        }
+
+
+        return null;
+    }
+
+    @Override
+    public int getStopsCountBetween(String originStation, String destinationStation) {
+
+        int originIndex = -1;
+        int destIndex = -1;
+
+        for (int i = 0; i < stopsSequence.size(); i++) {
+            String stationName = stopsSequence.get(i).getStation().getName();
+
+            if (stationName.equalsIgnoreCase(originStation)) {
+                originIndex = i;
+            }
+            if (stationName.equalsIgnoreCase(destinationStation)) {
+                destIndex = i;
+            }
+        }
+        if (originIndex != -1 && destIndex != -1 && destIndex > originIndex){
+
+            return destIndex - originIndex;
+        }
+
+        return  -1;
     }
 }

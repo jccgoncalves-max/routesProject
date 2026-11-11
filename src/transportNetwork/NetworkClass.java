@@ -3,6 +3,7 @@ package transportNetwork;
 import dataStructures.exceptions.InvalidStationException;
 import dataStructures.exceptions.InvalidStationOrderException;
 import dataStructures.exceptions.InvalidTimeFormatException;
+import dataStructures.exceptions.InvalideTimeException;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -85,6 +86,31 @@ public class NetworkClass implements Network{
 
         Station station = line.get(departureStation.toLowerCase());
         return station.getSuitableJourney(arrivalStation,time);
+    }
+
+    @Override
+    public Ticket findJourneyMinStops(String departureStation, String arrivalStation, String miniumTime, String maximumTime)throws InvalidStationException,
+            InvalidTimeFormatException, InvalidStationOrderException, InvalideTimeException {
+
+        if (!line.containsKey(departureStation.toLowerCase()) || !line.containsKey(arrivalStation.toLowerCase())){
+            throw  new InvalidStationException();
+        }
+        LocalTime minTime = getLocalTime(miniumTime);
+        LocalTime maxTime = getLocalTime(maximumTime);
+
+        if (minTime == null || maxTime == null){
+            throw new InvalidTimeFormatException();
+        }
+        if (minTime.isAfter(maxTime)){
+            throw new InvalideTimeException();
+        }
+
+        if (line.get(departureStation.toLowerCase()).getLinePosition() > line.get(arrivalStation.toLowerCase()).getLinePosition() ){
+            throw new InvalidStationOrderException();
+        }
+
+        Station station = line.get(departureStation.toLowerCase());
+        return station.getSuitableJourneyMinStops(arrivalStation,minTime,maxTime);
     }
 
     private LocalTime getLocalTime(String time){

@@ -18,4 +18,7 @@ public interface Station {
     int getLinePosition();
 
     void addDeparture(LocalTime time, Journey journey);
+
+    Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime,LocalTime maxTime);
+
 }
