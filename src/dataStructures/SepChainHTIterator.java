@@ -29,7 +29,7 @@ class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
 
     @Override
     public boolean hasNext() {
-        return currentIterator != null && currentIterator.hasNext();
+        return current != table.length;
     }
 
     @Override
@@ -68,7 +68,6 @@ class SepChainHTIterator<K,V> implements Iterator<Map.Entry<K,V>> {
          }
          current++;
      }
-     currentIterator = null;
  }
 
 }

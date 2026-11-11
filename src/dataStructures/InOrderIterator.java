@@ -55,6 +55,28 @@ public class InOrderIterator<E> implements Iterator<E> {
 
     private void advance() {
         //TODO: Left as an exercise.
+
+         // si o node tiver um no a direita
+        if (next.getRightChild() != null){
+
+            BTNode<E> rightChild = (BTNode<E>) next.getRightChild();
+            next = rightChild.furtherLeftElement();
+
+        }else {
+
+            BTNode<E> current = next;
+            BTNode<E> parent = (BTNode<E>) current.getParent();
+
+            while (parent != null && current == parent.getRightChild()) {
+                current = parent;
+                parent = (BTNode<E>) parent.getParent();
+            }
+
+            // O próximo passa a ser o pai
+            next = parent;
+
+        }
+
     }
 
 
