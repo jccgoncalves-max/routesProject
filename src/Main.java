@@ -17,7 +17,15 @@ public class Main {
     private static String LOADDING_LINE = "Loading line definition. <%d> stations loaded\n.";
     private static String JOURNEY_ALREADY_EXISTS_MSG = "Journey already exists.";
     private static String JOURNEY_SUCCESSFULLY_ADDED_MSG = "Journey successfully added.";
-
+    private static String JOURNEY_PRINT_MSG = "Journey: %s\n";
+    private static String DEPARTURE_STATION_PRINT_MSG = "Departure station: %s\n";
+    private static String DEPARTURE_TIME_PRINT_MSG = "Departure time: %s\n";
+    private static String ARRIVAL_STATION_PRINT_MSG = "Arrival station: %s\n";
+    private static String ARRIVEL_TIME_PRINT_MSG = "Arrival time: %s\n";
+    private static String NO_SUITABLE_JOURNEY_MSG = "No direct journey is available.";
+    private static String INVALID_STATION_MSG = "Invalid station.";
+    private static String INVALID_TIME_FORMAT_MSG = "Invalid time.";
+    private static String INVALID_STATION_ORDER_MSG = "Stations are not in the correct order.";
     //fixme: ficheiro
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
@@ -133,6 +141,7 @@ public class Main {
     private static void processCommand(Scanner in, Network tn, Command command) {
         switch (command) {
             case addJourney -> addJourneyCmd(in, tn);
+            case findJourney -> findJourneyCmd(in,tn);
             case help -> command.executeHelp();
         }
     }
@@ -157,7 +166,7 @@ public class Main {
      * @param in Scanner input
      * @param tn Transport Network
      */
-    private static void addJourneyCmd(Scanner in, Network tn) {
+    private static void addJourneyCmd(Scanner in, Network tn) {//todo: Não esquecer de ver a parte da serialização
         String journeyId = in.nextLine();
         int nStops = in.nextInt();
         in.nextLine();
@@ -190,10 +199,40 @@ public class Main {
                         arrivalTime = in.nextLine();
                         departureTime = in.nextLine();
                     }
-                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime);
+                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime,i);
                 }
-                System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
             }
+        System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
+    }
+
+    /**
+     * Finds the earliest journey that allows a passenger to travel from the origin station to the destination station
+     * w/o any transfers.
+     * @param in Scanner in
+     * @param tn Transport network app
+     */
+    private static void findJourneyCmd(Scanner in, Network tn) {
+        try {
+            String departureStation = in.nextLine();
+            String arrivalStation = in.nextLine();
+            String passengerTime = in.nextLine();
+            Ticket suitableJourney = tn.findJourney(departureStation,arrivalStation, passengerTime);
+            if(suitableJourney!=null){
+                System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//todo: testar output
+                System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
+                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());//todo: testar output
+            }else{
+                System.out.println(NO_SUITABLE_JOURNEY_MSG);
+            }
+        }catch (InvalidStationException e){
+            System.out.println(INVALID_STATION_MSG);
+        }catch(InvalidTimeFormatException e){
+            System.out.println(INVALID_TIME_FORMAT_MSG);
+        }catch(InvalidStationOrderException e){
+            System.out.println(INVALID_STATION_ORDER_MSG);
         }
     }
+}
 

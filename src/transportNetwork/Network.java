@@ -22,5 +22,15 @@ public interface Network {
      * @param departureTime
      * @param arrivalTime
      */
-    void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime);
+    void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime,int position);
+
+
+    /**
+     *
+     * @param departureStation
+     * @param arrivalStation
+     * @param passengerTime
+     * @return
+     */
+    Ticket findJourney(String departureStation, String arrivalStation, String passengerTime);
 }
