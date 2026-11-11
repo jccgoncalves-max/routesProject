@@ -1,5 +1,9 @@
 package transportNetwork;
 
+import dataStructures.exceptions.InvalidStationException;
+import dataStructures.exceptions.InvalidStationOrderException;
+import dataStructures.exceptions.InvalidTimeFormatException;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -46,21 +50,29 @@ public class NetworkClass implements Network{
 
 
     @Override
-    public void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime) {
-        Journey journey = journeys.get(journeyId.toLowerCase());//todo: confirmar se todo acesso deve ser lowercase??
-        Station station = new StationClass(stationName);
+    public void addStopToJourney(String journeyId, String stationName, String departureTime, String arrivalTime,int position) {
+        Journey journey = journeys.get(journeyId.toLowerCase());
+        Station station = new StationClass(stationName,position);
+        station.addDeparture(getLocalTime(departureTime),journey);
         line.put(stationName.toLowerCase(),station);
-        Stops stop = new StopClass(station,journey,getLocalTime(departureTime),getLocalTime(arrivalTime));//aqui ja adiciona as referências de station e journy
+        Stops stop = new StopClass(station,journey,getLocalTime(departureTime),getLocalTime(arrivalTime));
         journey.addStop(stop);
     }
 
-    @Override
-    public boolean isJourneySuitable(String departureStation, String arrivalStation, String passengerTime) {
-        Station station = line.get(departureStation);
-        station.getSuitableJourney(arrivalStation,getLocalTime(passengerTime));
-        return false;
-    }
 
+    @Override
+    public Ticket findJourney(String departureStation, String arrivalStation, String passengerTime) throws InvalidStationException,
+            InvalidTimeFormatException, InvalidStationOrderException {
+        if(!line.containsKey(departureStation)||!line.containsKey(arrivalStation))
+            throw new InvalidStationException();
+        LocalTime time = getLocalTime(passengerTime);
+        if(time == null)
+            throw new InvalidTimeFormatException();
+        if(line.get(departureStation.toLowerCase()).getLinePosition()>line.get(arrivalStation.toLowerCase()).getLinePosition())
+            throw new InvalidStationException();
+        Station station = line.get(departureStation.toLowerCase());
+        return station.getSuitableJourney(arrivalStation,time);
+    }
     /**
      * Converts String to desired LocalTime format
      * @param time time

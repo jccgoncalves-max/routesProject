@@ -199,7 +199,7 @@ public class Main {
                         arrivalTime = in.nextLine();
                         departureTime = in.nextLine();
                     }
-                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime);
+                    tn.addStopToJourney(journeyId, stationName, departureTime, arrivalTime,i);
                 }
             }
         System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
@@ -216,14 +216,13 @@ public class Main {
             String departureStation = in.nextLine();
             String arrivalStation = in.nextLine();
             String passengerTime = in.nextLine();
-            boolean suitable = tn.isJourneySuitable(departureStation,arrivalStation,passengerTime);
-            if(suitable){
-                Journey suitableJourney = tn.findJourney(departureStation,arrivalStation, passengerTime);
-                System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.getId());
-                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);//faz sentido utilizar o ticket quando ja temos as Strings
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.getJourneyTicket().DepartureTime().toString());//todo: testar output
+            Ticket suitableJourney = tn.findJourney(departureStation,arrivalStation, passengerTime);
+            if(suitableJourney!=null){
+                System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//todo: testar output
                 System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
-                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.getJourneyTicket().arrivalTime().toString());//todo: testar output
+                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());//todo: testar output
             }else{
                 System.out.println(NO_SUITABLE_JOURNEY_MSG);
             }

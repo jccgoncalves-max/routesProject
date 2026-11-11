@@ -1,5 +1,6 @@
 package transportNetwork;
 
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -47,7 +48,8 @@ public class JourneyClass implements Journey{
      * Gets Departure stop
      * @return Departure station
      */
-    private Stops getDepartureStation(){
+    @Override
+    public Stops getDepartureStation(){
         return stopsSequence.getFirst();
     }
 
@@ -55,15 +57,16 @@ public class JourneyClass implements Journey{
      * Gets arrival Stop
      * @return Departure stop
      */
-    private Stops getArrivalStation(){
+    @Override
+    public Stops getArrivalStation(){
         return stopsSequence.getLast();
     }
 
     /**
      * Sets Journey ticket
      */
-    private void setJourneyTicket(){
-        journeyTicket = new Ticket(this,getDepartureStation().getStation(),getDepartureStation().getDepartureTime(),
-                getArrivalStation().getStation(),getArrivalStation().getArrivalTime());
+    @Override
+    public void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime){
+        journeyTicket = new Ticket(journey,departure,departureTime,arrival,arrivalTime);
     }
 }
