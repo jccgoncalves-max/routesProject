@@ -31,11 +31,11 @@ public class StopClass implements Stops {
      * @param departureTime Stop departure time
      * @param arrivalTime Stop arrival time
      */
-    public StopClass(Station station,Journey journey,LocalTime departureTime, LocalTime arrivalTime){
+    public StopClass(Station station,Journey journey,LocalTime arrivalTime, LocalTime departureTime){
         this.station = station;
         this.journey = journey;
-        this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
+        this.departureTime = departureTime;
     }
 
     @Override

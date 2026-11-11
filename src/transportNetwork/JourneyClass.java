@@ -44,29 +44,30 @@ public class JourneyClass implements Journey{
         return journeyTicket;
     }
 
-    /**
-     * Gets Departure stop
-     * @return Departure station
-     */
+   /*
     @Override
     public Stops getDepartureStation(){
         return stopsSequence.getFirst();
     }
 
-    /**
-     * Gets arrival Stop
-     * @return Departure stop
-     */
+
     @Override
     public Stops getArrivalStation(){
         return stopsSequence.getLast();
     }
+    */
 
-    /**
-     * Sets Journey ticket
-     */
     @Override
     public void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime){
         journeyTicket = new Ticket(journey,departure,departureTime,arrival,arrivalTime);
     }
+
+    @Override
+    public Stops getStop(String stationName){
+            for(Stops stop : stopsSequence){
+                if(stop.getStation().getName().equalsIgnoreCase(stationName))
+                    return stop;
+            }
+            return null;
+        }
 }

@@ -45,7 +45,7 @@ public class NetworkClass implements Network{
 
 
     @Override
-    public void addJourney(String journeyId, String[] stationsName, String[] departures, String[] arrivals) {
+    public void addJourney(String journeyId, String[] stationsName, String[] arrivals, String[]departures ) {
         Journey journey = new JourneyClass(journeyId);
         journeys.put(journeyId.toLowerCase(),journey);
 
@@ -63,7 +63,7 @@ public class NetworkClass implements Network{
             if(departureTime!= null)
                 station.addDeparture(departureTime,journey);
 
-            Stops stop = new StopClass(station, journey, departureTime, arrivalTime);
+            Stops stop = new StopClass(station, journey, arrivalTime,departureTime);
             journey.addStop(stop);
         }
 
@@ -73,18 +73,26 @@ public class NetworkClass implements Network{
     @Override
     public Ticket findJourney(String departureStation, String arrivalStation, String passengerTime) throws InvalidStationException,
             InvalidTimeFormatException, InvalidStationOrderException {
-        if(!line.containsKey(departureStation.toLowerCase())||!line.containsKey(arrivalStation.toLowerCase()))
+
+        if(!line.containsKey(departureStation.toLowerCase()) || !line.containsKey(arrivalStation.toLowerCase()))//fixme: não trata as chaves de modo case insensitive
             throw new InvalidStationException();
 
         LocalTime time = getLocalTime(passengerTime);
+
         if(time == null)
             throw new InvalidTimeFormatException();
 
-        if(line.get(departureStation.toLowerCase()).getLinePosition()>=line.get(arrivalStation.toLowerCase()).getLinePosition())
-            throw new InvalidStationException();
+        if(line.get(departureStation.toLowerCase()).getLinePosition()>=line.get(arrivalStation.toLowerCase()).getLinePosition())//fixme: apenas tenho que confirmar o arrivalTime??
+            throw new InvalidStationOrderException();
 
         Station station = line.get(departureStation.toLowerCase());
+
         return station.getSuitableJourney(arrivalStation,time);
+    }
+
+    @Override
+    public void removeJourney(String journeyId) {
+
     }
 
     private LocalTime getLocalTime(String time){

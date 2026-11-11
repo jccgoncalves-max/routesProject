@@ -37,14 +37,9 @@ public class StationClass implements Station {
     public Ticket getSuitableJourney(String arrivalStation, LocalTime passengerTime) {
         for(Map.Entry<LocalTime, List<Journey>> e : stationsOrderedByHour.tailMap(passengerTime).entrySet()){
             for(Journey j : e.getValue()){
-                if(j.getArrivalStation().getStation().getName().equalsIgnoreCase(arrivalStation))
-                    /*
-                    j.setJourneyTicket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
-                            j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime());
-                return j.getJourneyTicket();
-                     */
-                    return new Ticket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
-                            j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime());
+                Stops dest = j.getStop(arrivalStation);///Aqui ja sabemos que a arrival existe como estação pq ja foi validados
+                if(dest!= null)
+                    return new Ticket(j,this,j.getStop(name).getDepartureTime(),dest.getStation(),dest.getArrivalTime());
             }
         }
         return null;

@@ -17,10 +17,12 @@ public interface Journey {
      */
     Ticket getJourneyTicket();
 
-
+/*
     Stops getDepartureStation();
 
     Stops getArrivalStation();
-
+ */
     void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime);
+
+    Stops getStop(String stationName);
 }
