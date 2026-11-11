@@ -27,6 +27,10 @@ public class Main {
     private static String INVALID_STATION_MSG = "Invalid station.";
     private static String INVALID_TIME_FORMAT_MSG = "Invalid time.";
     private static String INVALID_STATION_ORDER_MSG = "Stations are not in the correct order.";
+    private static String STOPS_JOURNEY_PRINT_MSG = "Stops: %d\n";
+    private static String INVALIDE_INTERVAL_TIME ="Invalid interval time.";
+
+
     //fixme: ficheiro
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
@@ -143,6 +147,7 @@ public class Main {
         switch (command) {
             case addJourney -> addJourneyCmd(in, tn);
             case findJourney -> findJourneyCmd(in,tn);
+            case findJourneyMinStops -> findJourneyMinStopsCmd(in, tn);
             case help -> command.executeHelp();
         }
     }
@@ -231,6 +236,44 @@ public class Main {
         }catch(InvalidStationOrderException e){
             System.out.println(INVALID_STATION_ORDER_MSG);
         }
+    }
+
+    private static void findJourneyMinStopsCmd(Scanner in, Network tn){
+
+        try {
+            String departureStation = in.nextLine();
+            String arrivalStation = in.nextLine();
+            String miniumTime = in.next();
+            String maximumTime = in.next();
+            in.nextLine();
+
+
+            Ticket suitableJourney = tn.findJourneyMinStops(departureStation,arrivalStation,miniumTime,maximumTime);
+
+            if (suitableJourney != null){
+                System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());
+                System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
+                System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
+                System.out.printf(STOPS_JOURNEY_PRINT_MSG,suitableJourney.stop());
+            }else{
+                System.out.println(NO_SUITABLE_JOURNEY_MSG);
+            }
+
+
+        } catch (InvalidStationException e){
+            System.out.println(INVALID_STATION_MSG);
+        }catch(InvalidTimeFormatException e){
+            System.out.println(INVALID_TIME_FORMAT_MSG);
+        }catch (InvalideTimeException e ){
+            System.out.println(INVALIDE_INTERVAL_TIME);
+        } catch(InvalidStationOrderException e){
+            System.out.println(INVALID_STATION_ORDER_MSG);
+        }
+
+
+
     }
 }
 

@@ -29,5 +29,17 @@ public interface Network {
      * @param passengerTime
      * @return
      */
+
     Ticket findJourney(String departureStation, String arrivalStation, String passengerTime);
+
+    /**
+     *
+     * @param departureStation
+     * @param arrivalStation
+     * @param miniumTime
+     * @param maximumTime
+     * @return
+     */
+    Ticket findJourneyMinStops(String departureStation,String arrivalStation,String miniumTime,String maximumTime);
+
 }

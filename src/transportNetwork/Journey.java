@@ -22,5 +22,12 @@ public interface Journey {
 
     Stops getArrivalStation();
 
+    void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime, int stopCount);
+
     void setJourneyTicket(Journey journey, Station departure, LocalTime departureTime, Station arrival, LocalTime arrivalTime);
+
+    Stops getStopAt(String stationName);
+
+    int getStopsCountBetween(String originStation, String destinationStation);
+
 }
