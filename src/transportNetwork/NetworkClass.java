@@ -46,7 +46,7 @@ public class NetworkClass implements Network{
 
 
     @Override
-    public void addJourney(String journeyId, String[] stationsName, String[] departures, String[] arrivals) {
+    public void addJourney(String journeyId, String[] stationsName, String[] arrivals, String[] departures) {
         Journey journey = new JourneyClass(journeyId);
         journeys.put(journeyId.toLowerCase(),journey);
 
@@ -64,7 +64,7 @@ public class NetworkClass implements Network{
             if(departureTime!= null)
                 station.addDeparture(departureTime,journey);
 
-            Stops stop = new StopClass(station, journey, departureTime, arrivalTime);
+            Stops stop = new StopClass(station, journey,arrivalTime,departureTime);
             journey.addStop(stop);
         }
 
@@ -85,6 +85,7 @@ public class NetworkClass implements Network{
             throw new InvalidStationException();
 
         Station station = line.get(departureStation.toLowerCase());
+
         return station.getSuitableJourney(arrivalStation,time);
     }
 
@@ -113,6 +114,11 @@ public class NetworkClass implements Network{
         return station.getSuitableJourneyMinStops(arrivalStation,minTime,maxTime);
     }
 
+    /**
+     * Converts string to LocalTime object
+     * @param time time
+     * @return LocalTime time
+     */
     private LocalTime getLocalTime(String time){
         if (time == null)
             return null;
@@ -124,4 +130,3 @@ public class NetworkClass implements Network{
     }
 }
 
-// tick - vai ter a linha a estação de partida com a hora e a chegada com a hora

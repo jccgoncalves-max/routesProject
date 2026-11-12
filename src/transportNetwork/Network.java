@@ -3,43 +3,41 @@ package transportNetwork;
 
 public interface Network {
 
-
     /**
      * Checks if journey with given id already exist
-     * @param id
-     * @return true if exists
+     * @param id Journey id
+     * @return true if journey exists
      */
     boolean hasJourney(String id);
 
     /**
      * Adds stops onto a journey with given id
-     *
-     * @param journeyId
-     * @param stationsName
-     * @param departures
-     * @param arrivals
+     * @param journeyId Journey id
+     * @param stationsName Name of the station
+     * @param arrivals Array of arrival times
+     * @param departures Array of departure times
      */
-    void addJourney(String journeyId, String[] stationsName, String[] departures, String[] arrivals);
+    void addJourney(String journeyId, String[] stationsName, String[] arrivals, String[] departures );
 
 
     /**
-     *
-     * @param departureStation
-     * @param arrivalStation
-     * @param passengerTime
-     * @return
+     * Finds suitable journey ticket for passenger
+     * @param departureStation Name of the departure station
+     * @param arrivalStation Name of the arrival station
+     * @param passengerTime Time that passenger arrives at station
+     * @return Suitable journey ticket
      */
 
     Ticket findJourney(String departureStation, String arrivalStation, String passengerTime);
 
     /**
-     *
-     * @param departureStation
-     * @param arrivalStation
-     * @param miniumTime
-     * @param maximumTime
-     * @return
+     * Finds suitable journey with minimumTime stops
+     * @param departureStation Name of the departure station
+     * @param arrivalStation Name of the arrival station
+     * @param minimumTime Minimum time of the time interval
+     * @param maximumTime Maximum time of the time interval
+     * @return Suitable journey ticket
      */
-    Ticket findJourneyMinStops(String departureStation,String arrivalStation,String miniumTime,String maximumTime);
+    Ticket findJourneyMinStops(String departureStation,String arrivalStation,String minimumTime,String maximumTime);
 
 }

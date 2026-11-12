@@ -21,7 +21,7 @@ public class StationClass implements Station {
     /**
      * Station Constructor
      * @param name Station unique name
-     //* @param linePosition Station line position
+     * @param linePosition Station line position
      */
     public StationClass(String name,int linePosition) {
         this.name = name;
@@ -36,15 +36,11 @@ public class StationClass implements Station {
     @Override
     public Ticket getSuitableJourney(String arrivalStation, LocalTime passengerTime) {
         for(Map.Entry<LocalTime, List<Journey>> e : stationsOrderedByHour.tailMap(passengerTime).entrySet()){
-            for(Journey j : e.getValue()){
-                if(j.getArrivalStation().getStation().getName().equalsIgnoreCase(arrivalStation))
-                    /*
-                    j.setJourneyTicket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
-                            j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime());
-                return j.getJourneyTicket();
-                     */
-                    return new Ticket(j,j.getDepartureStation().getStation(),j.getDepartureStation().getDepartureTime(),
-                            j.getArrivalStation().getStation(),j.getArrivalStation().getArrivalTime(),0);
+            for(Journey journey : e.getValue()){
+                Stops destinationStop = journey.getStop(arrivalStation);
+                if(destinationStop != null)
+                    return new Ticket(journey,this,journey.getStop(name).getDepartureTime(),
+                            destinationStop.getStation(),destinationStop.getArrivalTime(),0);
             }
         }
         return null;
@@ -67,18 +63,18 @@ public class StationClass implements Station {
     @Override
     public Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime, LocalTime maxTime) {
         // Filtrar partidas no intervalo minTime, maxTime
-        SortedMap<LocalTime, List<Journey>> journeyFiltre = stationsOrderedByHour.subMap(minTime, maxTime);
+        SortedMap<LocalTime, List<Journey>> filteredJourneys = stationsOrderedByHour.subMap(minTime, maxTime);
 
         Journey bestJourney = null;
 
-        for (List<Journey> listJourney : journeyFiltre.values()) {
+        for (List<Journey> listJourney : filteredJourneys.values()) {
             for (Journey journey : listJourney) {
 
-                Stops arrStop = journey.getStopAt(arrivalStation);
-                Stops depStop = journey.getStopAt(this.name);
+                Stops arrivalStop = journey.getStop(arrivalStation);
+                Stops departureStop = journey.getStop(this.name);
 
-                if (arrStop != null && depStop != null) {
-                    if (depStop.getDepartureTime().isBefore(arrStop.getArrivalTime())) {
+                if (arrivalStop != null && departureStop != null) {
+                    if (departureStop.getDepartureTime().isBefore(arrivalStop.getArrivalTime())) {
                         if (bestJourney == null) {
                             bestJourney = journey;
                         }
@@ -95,16 +91,24 @@ public class StationClass implements Station {
             return null;
         }
 
-        return creatTicket(bestJourney, arrivalStation);
+        return createTicket(bestJourney, arrivalStation);
     }
+
+    /**
+     *
+     * @param current
+     * @param best
+     * @param arrivalStation
+     * @return
+     */
     private boolean betterJourney(Journey current, Journey best, String arrivalStation) {
 
-        Stops currentDep = current.getStopAt(this.name);
-        Stops currentArr = current.getStopAt(arrivalStation);
+        Stops currentDep = current.getStop(this.name);
+        Stops currentArr = current.getStop(arrivalStation);
         int currentStops = current.getStopsCountBetween(this.name, arrivalStation);
 
-        Stops bestDep = best.getStopAt(this.name);
-        Stops bestArr = best.getStopAt(arrivalStation);
+        Stops bestDep = best.getStop(this.name);
+        Stops bestArr = best.getStop(arrivalStation);
         int bestStops = best.getStopsCountBetween(this.name, arrivalStation);
 
         if (currentStops != bestStops) {
@@ -122,28 +126,26 @@ public class StationClass implements Station {
         if (!currentDepTime.equals(bestDepTime)) {
             return currentDepTime.isBefore(bestDepTime);
         }
-
         return false;
     }
 
-    private Ticket creatTicket(Journey bestJourney, String arrivalStation) {
+    /**
+     *
+     * @param bestJourney
+     * @param arrivalStation
+     * @return
+     */
+    private Ticket createTicket(Journey bestJourney, String arrivalStation) {
 
-        Stops depStop = bestJourney.getStopAt(this.name);
-        Stops arrStop = bestJourney.getStopAt(arrivalStation);
+        Stops departureStop = bestJourney.getStop(this.name);
+        Stops arrivalStop = bestJourney.getStop(arrivalStation);
 
-        // Calcular o número de paragens
         int stopsCount = bestJourney.getStopsCountBetween(this.name, arrivalStation);
 
 
-        bestJourney.setJourneyTicket(
-                bestJourney,
-                depStop.getStation(),
-                depStop.getDepartureTime(),
-                arrStop.getStation(),
-                arrStop.getArrivalTime(),
-                stopsCount
+        bestJourney.setJourneyTicket(bestJourney, departureStop.getStation(), departureStop.getDepartureTime(),
+                arrivalStop.getStation(), arrivalStop.getArrivalTime(), stopsCount
         );
-
 
         return bestJourney.getJourneyTicket();
     }

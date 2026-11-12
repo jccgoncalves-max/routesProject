@@ -29,6 +29,8 @@ public class Main {
     private static String INVALID_STATION_ORDER_MSG = "Stations are not in the correct order.";
     private static String STOPS_JOURNEY_PRINT_MSG = "Stops: %d\n";
     private static String INVALIDE_INTERVAL_TIME ="Invalid interval time.";
+    private static String INVALID_JOURNEY_MSG = "Invalid journey.";
+    private static String REMOVED_JOURNEY_MSG = "Journey successfully removed.";
 
 
     //fixme: ficheiro
@@ -179,30 +181,32 @@ public class Main {
         boolean exists = tn.hasJourney(journeyId);
 
         String[] stationsName = new String[nStops];
-        String[] departures = new String[nStops];
         String[] arrivals = new String[nStops];
+        String[] departures = new String[nStops];
+
         for(int i = 0; i<nStops;i++){
             String stationName = in.nextLine();
-            String departureTime = null;
             String arrivalTime = null;
+            String departureTime = null;
+
             if(i==0){
                 departureTime = in.nextLine();
             } else if (i== nStops-1) {
                 arrivalTime = in.nextLine();
             }else{
-                departureTime = in.nextLine();
                 arrivalTime = in.nextLine();
+                departureTime = in.nextLine();
             }
             stationsName[i] = stationName;
-            departures[i] = departureTime;
             arrivals[i] = arrivalTime;
+            departures[i] = departureTime;
         }
 
         if (exists) {
             System.out.println(JOURNEY_ALREADY_EXISTS_MSG);
         }
         else{
-            tn.addJourney(journeyId,stationsName,departures,arrivals);
+            tn.addJourney(journeyId,stationsName,arrivals,departures);
             System.out.println(JOURNEY_SUCCESSFULLY_ADDED_MSG);
         }
     }
@@ -213,7 +217,7 @@ public class Main {
      * @param in Scanner in
      * @param tn Transport network app
      */
-    private static void findJourneyCmd(Scanner in, Network tn) {//fixme: devolve o mesmo tickey (1º findJourney) para os restos dos casos
+    private static void findJourneyCmd(Scanner in, Network tn) {
         try {
             String departureStation = in.nextLine();
             String arrivalStation = in.nextLine();
@@ -222,7 +226,7 @@ public class Main {
             if(suitableJourney!=null){
                 System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
                 System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//fixme: deve retornar de forma normalizasa
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//fixme: deve retornar de forma normalizada
                 //fixme: eg: input = "london" output = "London"
                 System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
                 System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
@@ -271,8 +275,6 @@ public class Main {
         } catch(InvalidStationOrderException e){
             System.out.println(INVALID_STATION_ORDER_MSG);
         }
-
-
 
     }
 }
