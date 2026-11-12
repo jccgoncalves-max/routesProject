@@ -1,12 +1,13 @@
 package transportNetwork;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.*;
 
 /**
  * Represents a Journey taken over the train line.
  */
-public class JourneyClass implements Journey{
+public class JourneyClass implements Journey, Serializable {
     private static final long serialVersionUID = 1L;
     /**
      * Not found constant
@@ -23,7 +24,7 @@ public class JourneyClass implements Journey{
     /**
      * Journey ticket
      */
-    private Ticket journeyTicket;
+    private transient Ticket journeyTicket;
 
     /**
      * JourneyClass constructor

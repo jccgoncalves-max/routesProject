@@ -2,7 +2,7 @@ package transportNetwork;
 
 import java.time.LocalTime;
 
-public record Ticket(Journey journey, Station DepartureStation, LocalTime DepartureTime,Station arrivalStation, LocalTime arrivalTime,int stop) {
+public record Ticket(Journey journey, Station departureStation, LocalTime departureTime,Station arrivalStation, LocalTime arrivalTime,int stop) {
 
     @Override
     public Journey journey() {
@@ -10,13 +10,13 @@ public record Ticket(Journey journey, Station DepartureStation, LocalTime Depart
     }
 
     @Override
-    public Station DepartureStation() {
-        return DepartureStation;
+    public Station departureStation() {
+        return departureStation;
     }
 
     @Override
-    public LocalTime DepartureTime() {
-        return DepartureTime;
+    public LocalTime departureTime() {
+        return departureTime;
     }
 
     @Override

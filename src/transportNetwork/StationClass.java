@@ -1,10 +1,11 @@
 package transportNetwork;
+import java.io.Serializable;
 import java.time.*;
 import java.util.*;
 /**
  * Represents a station on the line.
  */
-public class StationClass implements Station {
+public class StationClass implements Station , Serializable {
     private static final long serialVersionUID = 1L;
     /**
      * Station unique name
@@ -29,6 +30,7 @@ public class StationClass implements Station {
         this.linePosition = linePosition;
         stationsOrderedByHour = new TreeMap<>();
     }
+
     @Override
     public String getName() {
         return name;
@@ -63,31 +65,29 @@ public class StationClass implements Station {
 
     @Override
     public Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime, LocalTime maxTime) {
-        // Filtrar partidas no intervalo minTime, maxTime
-        SortedMap<LocalTime, List<Journey>> filteredJourneys = stationsOrderedByHour.subMap(minTime, maxTime);
-
         Journey bestJourney = null;
+        Iterator<Map.Entry<LocalTime,List<Journey>>> it = stationsOrderedByHour.tailMap(minTime).entrySet().iterator();
+        boolean withinInterval = true;
 
-        for (List<Journey> listJourney : filteredJourneys.values()) {
-            for (Journey journey : listJourney) {
+        while (it.hasNext() && withinInterval) {
+            Map.Entry<LocalTime, List<Journey>> entry = it.next();
 
-                Stops arrivalStop = journey.getStop(arrivalStation);
-                Stops departureStop = journey.getStop(this.name);
+            if (entry.getKey().isAfter(maxTime)) {
+                withinInterval = false;
+            } else {
+                for (Journey journey : entry.getValue()) {
+                    Stops arrivalStop = journey.getStop(arrivalStation);
+                    Stops departureStop = journey.getStop(this.name);
 
-                if (arrivalStop != null && departureStop != null) {
-                    if (departureStop.getDepartureTime().isBefore(arrivalStop.getArrivalTime())) {
-                        if (bestJourney == null) {
+                    if (arrivalStop != null && departureStop != null) {
+                        if (bestJourney == null || betterJourney(journey, bestJourney, arrivalStation)) {
                             bestJourney = journey;
                         }
-                        else if (betterJourney(journey, bestJourney, arrivalStation)) {
-                            bestJourney = journey;
-
-                        }
-
                     }
                 }
             }
         }
+
         if (bestJourney == null) {
             return null;
         }

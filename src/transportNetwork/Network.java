@@ -60,10 +60,5 @@ public interface Network extends Serializable {
      */
     void storeCities(String fileName);
 
-    /**
-     *
-     * @param input
-     * @return
-     */
-    String getNormalizedString(String input);
+
 }

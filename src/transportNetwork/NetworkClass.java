@@ -12,9 +12,9 @@ import java.io.*;
 /**
  *  Represents trains transportations
  */
-public class NetworkClass implements Network{
+public class NetworkClass implements Network,Serializable{
     private static final long serialVersionUID = 1L;
-  //  private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
+    private final static DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
     /**
      * Sequence of stations
      */
@@ -26,7 +26,7 @@ public class NetworkClass implements Network{
     /**
      * Structure to serialize the train station.
      */
-    private List<Station> serializedLine;
+  //  private List<Station> serializedLine;
 
 
     /**
@@ -35,7 +35,7 @@ public class NetworkClass implements Network{
     public NetworkClass(){
      journeys = new HashMap<>(20);
      line = new HashMap<>(20);
-     serializedLine = new LinkedList<>();
+   //  serializedLine = new LinkedList<>();
 
     }
 
@@ -106,7 +106,7 @@ public class NetworkClass implements Network{
             throw new InvalideTimeException();
         }
 
-        if (line.get(departureStation.toLowerCase()).getLinePosition() > line.get(arrivalStation.toLowerCase()).getLinePosition() ){
+        if (line.get(departureStation.toLowerCase()).getLinePosition() >= line.get(arrivalStation.toLowerCase()).getLinePosition() ){
             throw new InvalidStationOrderException();
         }
 
@@ -131,7 +131,7 @@ public class NetworkClass implements Network{
     public void addStation(String nameStation) {
         String key = nameStation.toLowerCase();
         if (!line.containsKey(key)) {
-            int position = line.size(); // Atribui pos pela ordem de leitura
+            int position = line.size();
             Station station = new StationClass(nameStation, position);
             line.put(key, station);
         }
@@ -148,12 +148,6 @@ public void storeCities(String fileName){
         }
     }
 
-    @Override
-    public String getNormalizedString(String input) {
-        String finalString = input.substring(0,1).toUpperCase()+ input.substring(1).toLowerCase();
-
-        return finalString   ;
-    }
 
 
     /**
@@ -190,7 +184,7 @@ public void storeCities(String fileName){
         if (time == null)
             return null;
         try{
-            return LocalTime.parse(time);
+            return LocalTime.parse(time.trim(),TIME_FORMAT);
         }catch(DateTimeParseException e) {
             return null;
         }

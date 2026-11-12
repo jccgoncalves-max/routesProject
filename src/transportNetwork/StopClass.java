@@ -1,11 +1,12 @@
 package transportNetwork;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 /**
  * Represents each stop of a Journey.
  */
-public class StopClass implements Stops {
+public class StopClass implements Stops, Serializable {
     /**
      * Station that references the stop
      */

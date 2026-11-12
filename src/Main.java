@@ -41,13 +41,12 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         Network tn = NetworkClass.load(SERIALIZED_FILE_NAME);
-        File file = new File(FILE_NAME);
 
         if (tn!=null) {
             System.out.println(TRANSPORTATION_RESTORED_SUCESS);
         }
         else if (args.length > 0) {
-            tn = readFile(args[0],file);
+            tn = readFile(args[0]);
         }
         if (tn == null) {
             System.out.println(NO_LINE_MSG);
@@ -64,14 +63,13 @@ public class Main {
      * @return
      * @throws FileNotFoundException
      */
-    private static Network readFile(String fileName,File file) throws FileNotFoundException {
-        try (Scanner reader = new Scanner(file)){
+    private static Network readFile(String fileName) throws FileNotFoundException {
+        try (Scanner reader = new Scanner(new File(fileName))){
             Network tn = new NetworkClass();
 
-            int size = reader.nextInt();//fixme: tá fora do range
-            reader.nextLine();
+            int size = Integer.parseInt(reader.nextLine().trim());
 
-            for (int i = 0; i < size;i++ ){
+            for (int i = 0; i < size;i++){
                 String stationName = reader.nextLine().trim();
                 tn.addStation(stationName);
             }
@@ -83,10 +81,6 @@ public class Main {
             return null;
         }
     }
-
-
-
-
 
 
     /**
@@ -174,8 +168,8 @@ public class Main {
      * @param in Scanner input
      * @param tn Transport Network
      */
-    private static void addJourneyCmd(Scanner in, Network tn) {//todo: Não esquecer de ver a parte da serialização
-        String journeyId = in.nextLine();
+    private static void addJourneyCmd(Scanner in, Network tn) {
+        String journeyId = in.nextLine().trim();
         int nStops = in.nextInt();
         in.nextLine();
         boolean exists = tn.hasJourney(journeyId);
@@ -185,17 +179,17 @@ public class Main {
         String[] departures = new String[nStops];
 
         for(int i = 0; i<nStops;i++){
-            String stationName = in.nextLine();
+            String stationName = in.nextLine().trim();
             String arrivalTime = null;
             String departureTime = null;
 
             if(i==0){
-                departureTime = in.nextLine();
+                departureTime = in.nextLine().trim();
             } else if (i== nStops-1) {
-                arrivalTime = in.nextLine();
+                arrivalTime = in.nextLine().trim();
             }else{
-                arrivalTime = in.nextLine();
-                departureTime = in.nextLine();
+                arrivalTime = in.nextLine().trim();
+                departureTime = in.nextLine().trim();
             }
             stationsName[i] = stationName;
             arrivals[i] = arrivalTime;
@@ -219,16 +213,16 @@ public class Main {
      */
     private static void findJourneyCmd(Scanner in, Network tn) {
         try {
-            String departureStation = in.nextLine();
-            String arrivalStation = in.nextLine();
-            String passengerTime = in.nextLine();
+            String departureStation = in.nextLine().trim();
+            String arrivalStation = in.nextLine().trim();
+            String passengerTime = in.nextLine().trim();
             Ticket suitableJourney = tn.findJourney(departureStation,arrivalStation, passengerTime);
             if(suitableJourney!=null){
                 System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
-                System.out.printf(DEPARTURE_STATION_PRINT_MSG,tn.getNormalizedString( departureStation));
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG,suitableJourney.departureStation().getName());
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.departureTime().toString());
 
-                System.out.printf(ARRIVAL_STATION_PRINT_MSG,tn.getNormalizedString(arrivalStation));
+                System.out.printf(ARRIVAL_STATION_PRINT_MSG,suitableJourney.arrivalStation().getName());
                 System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
             }else{
                 System.out.println(NO_SUITABLE_JOURNEY_MSG);
@@ -251,20 +245,18 @@ public class Main {
      */
     private static void findJourneyMinStopsCmd(Scanner in, Network tn){
         try {
-            String departureStation = in.nextLine();
-            String arrivalStation = in.nextLine();
-            String miniumTime = in.next();
-            String maximumTime = in.next();
+            String departureStation = in.nextLine().trim();
+            String arrivalStation = in.nextLine().trim();
+            String miniumTime = in.next().trim();
+            String maximumTime = in.next().trim();
             in.nextLine();
-
-
             Ticket suitableJourney = tn.findJourneyMinStops(departureStation,arrivalStation,miniumTime,maximumTime);
 
             if (suitableJourney != null){
                 System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
-                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());
-                System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG,suitableJourney.departureStation().getName());
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.departureTime().toString());
+                System.out.printf(ARRIVAL_STATION_PRINT_MSG,suitableJourney.arrivalStation().getName());
                 System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
                 System.out.printf(STOPS_JOURNEY_PRINT_MSG,suitableJourney.stop());
             }else{
@@ -272,7 +264,7 @@ public class Main {
             }
 
 
-        } catch (InvalidStationException e){
+        }catch (InvalidStationException e){
             System.out.println(INVALID_STATION_MSG);
         }catch(InvalidTimeFormatException e){
             System.out.println(INVALID_TIME_FORMAT_MSG);
@@ -291,14 +283,13 @@ public class Main {
      */
     private static void removeCmd(Scanner in, Network tn) {
 
-        String journeyId = in.nextLine();
+        String journeyId = in.nextLine().trim();
 
         if (tn.removeJourney(journeyId)) {
             System.out.println(JOURNEY_SUCCESSFULY_REMOVE);
 
         } else
             System.out.println(INVALID_JOURNEY);
-
     }
 
     /**
