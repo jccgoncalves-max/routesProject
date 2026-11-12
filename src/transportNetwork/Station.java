@@ -1,8 +1,9 @@
 package transportNetwork;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
-public interface Station {
+public interface Station extends Serializable {
     /**
      *
      * @return

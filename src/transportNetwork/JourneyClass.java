@@ -7,6 +7,7 @@ import java.util.*;
  * Represents a Journey taken over the train line.
  */
 public class JourneyClass implements Journey{
+    private static final long serialVersionUID = 1L;
     /**
      * Not found constant
      */
@@ -28,7 +29,7 @@ public class JourneyClass implements Journey{
      * JourneyClass constructor
      * @param id Journey's unique id
      */
-    public JourneyClass(String id){
+    protected JourneyClass(String id){
         this.id = id;
         stopsSequence = new ArrayList<>();
     }

@@ -1,9 +1,10 @@
 package transportNetwork;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public interface Journey {
+public interface Journey extends Serializable {
     /**
      * Adds a new stop to the journey
      * @param newStop Stop to be added

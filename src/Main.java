@@ -8,14 +8,16 @@ import java.io.FileReader;
 import java.util.Scanner;
 import transportNetwork.*;
 import dataStructures.exceptions.*;
+import java.io.*;
 import java.util.*;
 public class Main {
 
     private static String FILE_NAME = "data.txt";
+    private static String SERIALIZED_FILE_NAME = "file.dat";
     private static String TRANSPORTATION_RESTORED_SUCESS = "Transportation network restored successfully.";
     private static String TRANSPORTATION_NOT_FOUND = "Transportation network not found.";
-    private static String NO_LINE = "No line definition.";
-    private static String LOADING_LINE = "Loading line definition. <%d> stations loaded.\n";
+    private static String NO_LINE_MSG = "No line definition.";
+    private static String LOADING_LINE = "Loading line definition. %d stations loaded.\n";
     private static String JOURNEY_ALREADY_EXISTS_MSG = "Journey already exists.";
     private static String JOURNEY_SUCCESSFULLY_ADDED_MSG = "Journey successfully added.";
     private static String JOURNEY_PRINT_MSG = "Journey: %s\n";
@@ -33,26 +35,22 @@ public class Main {
     private static String REMOVED_JOURNEY_MSG = "Journey successfully removed.";
     private static String JOURNEY_SUCCESSFULY_REMOVE = "Journey successfully removed.";
     private static String INVALID_JOURNEY ="Invalid journey.";
+    private static String SAVED_TRANSPORTATION_APP_MSG = "Transportation network saved.";
+    private static String QUIT_MSG = "Goodbye.";
 
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
-        Network tn = new NetworkClass();
+        Network tn = NetworkClass.load(SERIALIZED_FILE_NAME);
         File file = new File(FILE_NAME);
 
-        // Tenta restaurar o estado guardado anteriormente
-        if (file.exists()) {
-            //  tn = new NetworkClass().load(FILE_NAME);
+        if (tn!=null) {
             System.out.println(TRANSPORTATION_RESTORED_SUCESS);
-
         }
-        //Se não houver estado guardado, tenta ler o ficheiro
         else if (args.length > 0) {
-            tn = readFile(args[0]);
-            //carregar do ficheiro
-
-            //Se nenhum dos dois funcionou (tn continua null), encerra o programa
-        }if (tn == null) {
-            System.out.println(NO_LINE);
+            tn = readFile(args[0],file);
+        }
+        if (tn == null) {
+            System.out.println(NO_LINE_MSG);
             in.close();
             return;
         }
@@ -62,32 +60,24 @@ public class Main {
 
     /**
      *
-     * @param nameFile
+     * @param fileName
      * @return
      * @throws FileNotFoundException
      */
-    private static Network readFile(String nameFile) throws FileNotFoundException {
-
-        File file = new File(nameFile);
-
-        if (!file.exists()) {
-            return null;
-        }
-        System.out.println(TRANSPORTATION_NOT_FOUND);
-
-        try (Scanner reader = new Scanner(new FileReader(nameFile))){
+    private static Network readFile(String fileName,File file) throws FileNotFoundException {
+        try (Scanner reader = new Scanner(file)){
             Network tn = new NetworkClass();
 
-            int size = reader.nextInt();
+            int size = reader.nextInt();//fixme: tá fora do range
             reader.nextLine();
 
             for (int i = 0; i < size;i++ ){
                 String stationName = reader.nextLine().trim();
                 tn.addStation(stationName);
             }
-
+            System.out.println(TRANSPORTATION_NOT_FOUND);
             System.out.printf(LOADING_LINE,size);
-            return  tn;
+            return tn;
 
         }catch (FileNotFoundException e){
             return null;
@@ -103,12 +93,12 @@ public class Main {
      * Contains all enum
      */
     private enum Command {
-        addJourney("addJourney: Inserts a new journey into the transportation network.\n"),
-        findJourney("findJourney: Finds the earliest journey that allows a passenger to travel from one station to another.\n"),
-        findJourneyMinStops("findJourneyMinStops: Finds the direct journey with the minimum number of stops.\n"),
-        removeJourney("removeJourney: Removes the given journey from the transportation network.\n"),
-        help("help: Displays the list of available commands.\n"),
-        quit("quit: Saves the transportation network and terminates the application.\n");
+        addJourney("addJourney: Inserts a new journey into the transportation network."),
+        findJourney("findJourney: Finds the earliest journey that allows a passenger to travel from one station to another."),
+        findJourneyMinStops("findJourneyMinStops: Finds the direct journey with the minimum number of stops."),
+        removeJourney("removeJourney: Removes the given journey from the transportation network."),
+        help("help: Displays the list of available commands."),
+        quit("quit: Saves the transportation network and terminates the application.");
 
         private String msg;
 
@@ -235,10 +225,10 @@ public class Main {
             Ticket suitableJourney = tn.findJourney(departureStation,arrivalStation, passengerTime);
             if(suitableJourney!=null){
                 System.out.printf(JOURNEY_PRINT_MSG, suitableJourney.journey().getId());
-                System.out.printf(DEPARTURE_STATION_PRINT_MSG, departureStation);
-                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());//fixme: deve retornar de forma normalizada
-                //fixme: eg: input = "london" output = "London"
-                System.out.printf(ARRIVAL_STATION_PRINT_MSG,arrivalStation );
+                System.out.printf(DEPARTURE_STATION_PRINT_MSG,tn.getNormalizedString( departureStation));
+                System.out.printf(DEPARTURE_TIME_PRINT_MSG, suitableJourney.DepartureTime().toString());
+
+                System.out.printf(ARRIVAL_STATION_PRINT_MSG,tn.getNormalizedString(arrivalStation));
                 System.out.printf(ARRIVEL_TIME_PRINT_MSG,suitableJourney.arrivalTime().toString());
             }else{
                 System.out.println(NO_SUITABLE_JOURNEY_MSG);
@@ -315,8 +305,13 @@ public class Main {
      * Terminates program execution
      * @param tn Transport Network app
      */
-    private static void quitCmd( Network tn) {
-
+    private static void quitCmd(Network tn) {
+        try{
+            tn.storeCities(SERIALIZED_FILE_NAME);
+        } catch (RuntimeException e) {
+        }
+        System.out.println(SAVED_TRANSPORTATION_APP_MSG);
+        System.out.println(QUIT_MSG);
     }
 }
 

@@ -1,8 +1,9 @@
 package transportNetwork;
 
 
-public interface Network {
+import java.io.Serializable;
 
+public interface Network extends Serializable {
     /**
      * Checks if journey with given id already exist
      * @param id Journey id
@@ -53,4 +54,16 @@ public interface Network {
      */
     boolean removeJourney(String journeyId);
 
+    /**
+     *
+     * @param fileName
+     */
+    void storeCities(String fileName);
+
+    /**
+     *
+     * @param input
+     * @return
+     */
+    String getNormalizedString(String input);
 }

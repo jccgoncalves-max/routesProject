@@ -1,24 +1,24 @@
 package transportNetwork;
 
-import dataStructures.exceptions.InvalidStationException;
-import dataStructures.exceptions.InvalidStationOrderException;
-import dataStructures.exceptions.InvalidTimeFormatException;
-import dataStructures.exceptions.InvalideTimeException;
+import dataStructures.exceptions.*;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.*;
 import java.time.*;
+
+import java.io.*;
 /**
  *  Represents trains transportations
  */
 public class NetworkClass implements Network{
-    private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
+    private static final long serialVersionUID = 1L;
+  //  private final DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
     /**
      * Sequence of stations
      */
-    private Map<String,Station> line;
+     private Map<String,Station> line;
     /**
      * Collection of journeys
      */
@@ -82,7 +82,7 @@ public class NetworkClass implements Network{
             throw new InvalidTimeFormatException();
 
         if(line.get(departureStation.toLowerCase()).getLinePosition()>=line.get(arrivalStation.toLowerCase()).getLinePosition())
-            throw new InvalidStationException();
+            throw new InvalidStationOrderException();
 
         Station station = line.get(departureStation.toLowerCase());
 
@@ -136,6 +136,50 @@ public class NetworkClass implements Network{
             line.put(key, station);
         }
     }
+@Override
+public void storeCities(String fileName){
+        try{
+            ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream(fileName));
+            file.writeObject(this);
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            throw new OutputWriteException();
+        }
+    }
+
+    @Override
+    public String getNormalizedString(String input) {
+        String finalString = input.substring(0,1).toUpperCase()+ input.substring(1).toLowerCase();
+
+        return finalString   ;
+    }
+
+
+    /**
+     *Loads and deserializes a saved Network object from a file.
+     * Time Complexity:
+     * Best Case: O(1) - File is missing or empty, failing in constant time.
+     * Worst Case: O(N) - Reads and deserializes N saved cities into memory.
+     * @param name Serialization file1
+     * @return Loaded Network object, or null if loading fails
+     */
+    public static Network load(String name) {
+        Network tn = null ;
+        try{
+            ObjectInputStream file = new ObjectInputStream(
+                    new FileInputStream(name) );
+            tn = (Network) file.readObject();
+            file.close();
+        }
+        catch (IOException e ) {
+            tn = null;
+        }
+        catch (ClassNotFoundException e) {
+            tn = null;
+        }
+        return tn;
+    }
 
     /**
      * Converts string to LocalTime object
@@ -146,10 +190,10 @@ public class NetworkClass implements Network{
         if (time == null)
             return null;
         try{
-            return LocalTime.parse(time,TIME_FORMAT);
+            return LocalTime.parse(time);
         }catch(DateTimeParseException e) {
             return null;
         }
     }
-}
 
+}

@@ -5,6 +5,7 @@ import java.util.*;
  * Represents a station on the line.
  */
 public class StationClass implements Station {
+    private static final long serialVersionUID = 1L;
     /**
      * Station unique name
      */
@@ -23,7 +24,7 @@ public class StationClass implements Station {
      * @param name Station unique name
      * @param linePosition Station line position
      */
-    public StationClass(String name,int linePosition) {
+    protected StationClass(String name,int linePosition) {
         this.name = name;
         this.linePosition = linePosition;
         stationsOrderedByHour = new TreeMap<>();
