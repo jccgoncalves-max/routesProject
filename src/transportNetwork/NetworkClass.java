@@ -114,6 +114,29 @@ public class NetworkClass implements Network{
         return station.getSuitableJourneyMinStops(arrivalStation,minTime,maxTime);
     }
 
+    @Override
+    public boolean removeJourney(String journeyId) {
+        Journey journey = journeys.remove(journeyId.toLowerCase());
+        if (journey == null){
+            return false;
+        }
+        for (Stops stop : journey.getStops()) {
+            stop.getStation().removeJourney(journey);
+        }
+        return true;
+    }
+
+
+    @Override
+    public void addStation(String nameStation) {
+        String key = nameStation.toLowerCase();
+        if (!line.containsKey(key)) {
+            int position = line.size(); // Atribui pos pela ordem de leitura
+            Station station = new StationClass(nameStation, position);
+            line.put(key, station);
+        }
+    }
+
     /**
      * Converts string to LocalTime object
      * @param time time

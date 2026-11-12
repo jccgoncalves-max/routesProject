@@ -40,4 +40,17 @@ public interface Network {
      */
     Ticket findJourneyMinStops(String departureStation,String arrivalStation,String minimumTime,String maximumTime);
 
+    /**
+     *
+     * @param nameStation
+     */
+    void addStation(String nameStation); // usado na leitura do ficheiro
+
+    /**
+     *
+     * @param journeyId
+     * @return
+     */
+    boolean removeJourney(String journeyId);
+
 }

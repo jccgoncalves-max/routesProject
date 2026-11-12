@@ -64,6 +64,11 @@ public class JourneyClass implements Journey{
         return null;
     }
 
+    @Override
+    public ArrayList<Stops> getStops(){
+        return stopsSequence;
+    }
+
 
     @Override
     public int getStopsCountBetween(String originStation, String destinationStation) {

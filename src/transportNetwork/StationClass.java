@@ -94,6 +94,27 @@ public class StationClass implements Station {
         return createTicket(bestJourney, arrivalStation);
     }
 
+    @Override
+    public void removeJourney(Journey journey) {
+        Stops stop = journey.getStop(this.name);
+
+        if (stop != null && stop.getDepartureTime() != null) {
+            LocalTime depTime = stop.getDepartureTime();
+
+            List<Journey> list = stationsOrderedByHour.get(depTime);
+            if (list != null) {
+                list.remove(journey);
+
+                if (list.isEmpty()) {
+                    stationsOrderedByHour.remove(depTime);
+                }
+            }
+        }
+    }
+
+
+
+
     /**
      *
      * @param current

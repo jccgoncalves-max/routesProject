@@ -1,6 +1,7 @@
 package transportNetwork;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public interface Journey {
     /**
@@ -46,5 +47,12 @@ public interface Journey {
      * @return Number of stops between two station
      */
     int getStopsCountBetween(String originStation, String destinationStation);
+
+    /**
+     *
+     * @return
+     */
+    ArrayList<Stops> getStops();
+
 
 }

@@ -1,5 +1,5 @@
 /**
- * Lenine Semedo 73327 & João Gonçalves 73439  daasaaddasda
+ * Lenine Semedo 73327 & João Gonçalves 73439
  */
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class Main {
     private static String TRANSPORTATION_RESTORED_SUCESS = "Transportation network restored successfully.";
     private static String TRANSPORTATION_NOT_FOUND = "Transportation network not found.";
     private static String NO_LINE = "No line definition.";
-    private static String LOADDING_LINE = "Loading line definition. <%d> stations loaded\n.";
+    private static String LOADING_LINE = "Loading line definition. <%d> stations loaded.\n";
     private static String JOURNEY_ALREADY_EXISTS_MSG = "Journey already exists.";
     private static String JOURNEY_SUCCESSFULLY_ADDED_MSG = "Journey successfully added.";
     private static String JOURNEY_PRINT_MSG = "Journey: %s\n";
@@ -31,37 +31,41 @@ public class Main {
     private static String INVALIDE_INTERVAL_TIME ="Invalid interval time.";
     private static String INVALID_JOURNEY_MSG = "Invalid journey.";
     private static String REMOVED_JOURNEY_MSG = "Journey successfully removed.";
+    private static String JOURNEY_SUCCESSFULY_REMOVE = "Journey successfully removed.";
+    private static String INVALID_JOURNEY ="Invalid journey.";
 
-
-    //fixme: ficheiro
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         Network tn = new NetworkClass();
+        File file = new File(FILE_NAME);
+
+        // Tenta restaurar o estado guardado anteriormente
+        if (file.exists()) {
+            //  tn = new NetworkClass().load(FILE_NAME);
+            System.out.println(TRANSPORTATION_RESTORED_SUCESS);
+
+        }
+        //Se não houver estado guardado, tenta ler o ficheiro
+        else if (args.length > 0) {
+            tn = readFile(args[0]);
+            //carregar do ficheiro
+
+            //Se nenhum dos dois funcionou (tn continua null), encerra o programa
+        }if (tn == null) {
+            System.out.println(NO_LINE);
+            in.close();
+            return;
+        }
         executeCommand(in, tn);
         in.close();
-    /*
-    File file = new File(FILE_NAME);
-
-    if (file.exists()) {
-     //   tn = new NetworkClass().load(FILE_NAME);
-        System.out.println(TRANSPORTATION_RESTORED_SUCESS);
-
     }
 
-    else if (args.length > 0) {
-        tn = readFile(args[0]);
-        // carregar do ficheiro
-
-    } else if (tn == null) {
-        System.out.println(NO_LINE);
-        return;
-    }
-        executeCommand(in,tn);
-
+    /**
+     *
+     * @param nameFile
+     * @return
+     * @throws FileNotFoundException
      */
-    }
-/*
-    //fixme: colequei algumas linhas como comentario somente para evitar erro, mas depois terminarei essa parte
     private static Network readFile(String nameFile) throws FileNotFoundException {
 
         File file = new File(nameFile);
@@ -71,26 +75,28 @@ public class Main {
         }
         System.out.println(TRANSPORTATION_NOT_FOUND);
 
-        try (Scanner leitor = new Scanner(new FileReader(nameFile))){
+        try (Scanner reader = new Scanner(new FileReader(nameFile))){
             Network tn = new NetworkClass();
 
-            int size = leitor.nextInt();
-           // leitor.nextLine();
+            int size = reader.nextInt();
+            reader.nextLine();
 
             for (int i = 0; i < size;i++ ){
-               String nameStation = leitor.nextLine().trim();
-            //   tn.addStation(nameStation); // TODO: classe sistema, responsavel por adicionar estações na SepChainHashTable e  ArrayClass
+                String stationName = reader.nextLine().trim();
+                tn.addStation(stationName);
             }
 
-            System.out.printf(LOADDING_LINE,size);
-             return  tn;
+            System.out.printf(LOADING_LINE,size);
+            return  tn;
 
         }catch (FileNotFoundException e){
             return null;
         }
     }
 
- */
+
+
+
 
 
     /**
@@ -114,6 +120,9 @@ public class Main {
             return this.msg;
         }
 
+        /**
+         *
+         */
         private void executeHelp() {
             for (int i = 0; i < Command.values().length; i++) {
                 System.out.println(Command.values()[i].getMsg());
@@ -140,17 +149,18 @@ public class Main {
 
     /**
      * Processes command interpreter.
-     *
-     * @param in      Scanner input
-     * @param tn      Transport Network App
+     * @param in Scanner input
+     * @param tn Transport Network App
      * @param command command
      */
     private static void processCommand(Scanner in, Network tn, Command command) {
         switch (command) {
+            case help -> command.executeHelp();
             case addJourney -> addJourneyCmd(in, tn);
             case findJourney -> findJourneyCmd(in,tn);
             case findJourneyMinStops -> findJourneyMinStopsCmd(in, tn);
-            case help -> command.executeHelp();
+            case removeJourney -> removeCmd(in,tn);
+            case quit -> quitCmd(tn);
         }
     }
 
@@ -242,8 +252,14 @@ public class Main {
         }
     }
 
+    /**
+     * Finds the journey with the minimum number of stops that allows a passenger to travel from the
+     * origin station to the destination station without making any transfers within a specified time
+     * interval.
+     * @param in Scanner input
+     * @param tn Transport Network app
+     */
     private static void findJourneyMinStopsCmd(Scanner in, Network tn){
-
         try {
             String departureStation = in.nextLine();
             String arrivalStation = in.nextLine();
@@ -275,6 +291,31 @@ public class Main {
         } catch(InvalidStationOrderException e){
             System.out.println(INVALID_STATION_ORDER_MSG);
         }
+
+    }
+
+    /**
+     * Removes the journey with the given identifier from the transportation network.
+     * @param in Scanner input
+     * @param tn Transport Network app
+     */
+    private static void removeCmd(Scanner in, Network tn) {
+
+        String journeyId = in.nextLine();
+
+        if (tn.removeJourney(journeyId)) {
+            System.out.println(JOURNEY_SUCCESSFULY_REMOVE);
+
+        } else
+            System.out.println(INVALID_JOURNEY);
+
+    }
+
+    /**
+     * Terminates program execution
+     * @param tn Transport Network app
+     */
+    private static void quitCmd( Network tn) {
 
     }
 }

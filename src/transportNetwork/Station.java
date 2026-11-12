@@ -40,4 +40,10 @@ public interface Station {
      */
     Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime,LocalTime maxTime);
 
+    /**
+     *
+     * @param journey
+     */
+    void removeJourney(Journey journey);
+
 }
