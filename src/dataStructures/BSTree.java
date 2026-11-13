@@ -2,9 +2,8 @@ package dataStructures;
 
 import dataStructures.exceptions.EmptyMapException;
 import dataStructures.Map.Entry;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
 
 /**
  * Binary Search Tree Sorted Map
@@ -13,7 +12,9 @@ import java.io.ObjectOutputStream;
  * @param <K> Generic Key
  * @param <V> Generic Value
  */
-public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> implements SortedMap<K,V> {
+public class BSTree<K extends Comparable< K>,V> extends BTree<Entry<K,V>> implements SortedMap<K,V>,Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     /**
      * Comparator
      */
@@ -22,7 +23,10 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      * Default comparator
      * @param <K>
      */
-    static class DefaultComparator<K extends Comparable<K>> implements Comparator<K> {
+    @SuppressWarnings("unchecked")
+    static class DefaultComparator<K extends Comparable<K>> implements Comparator<K>, Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L;
         public int compare(K a, K b)  {
             return a.compareTo(b);
         }
@@ -30,11 +34,12 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
     /**
      * Constructors
      */
+    @SuppressWarnings("unchecked")
     public BSTree(){
         super();
-        comparator= new DefaultComparator<>();
+        comparator= new DefaultComparator<K>();
     }
-
+    @SuppressWarnings("unchecked")
     public BSTree(Comparator<K> compare){
         super();
         comparator = compare;
@@ -103,7 +108,6 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      * or null if the dictionary does not have an entry with that key
      */
     public V get(K key) {
-        //TODO: Left as an exercise.
         tri<K,V> triple = find(key);
 
         if (triple.node == null)
@@ -124,7 +128,6 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      * or null if the dictionary does not have an entry with that key
      */
     public V put(K key, V value) {
-        //TODO: Left as an exercise.
 
         tri<K,V> triple = find(key);
 
@@ -161,7 +164,6 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
      * or null if the dictionary does not an entry with that key
      */
     public V remove(K key) {
-        //TODO: Left as an exercise.
 
         tri<K,V> triple = find(key);
 
@@ -170,14 +172,13 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
         }
 
         V oldNode = triple.node().getElement().value();
-        //caso 1
         if (triple.node().getRightChild() == null && triple.node().getLeftChild() == null){
 
             if (triple.parent() == null){
                 root = null;
 
             }else {
-                if (triple.cmp() < 0)
+                if (triple.parent().getLeftChild()==triple.node())
                     triple.parent().setLeftChild(null);
                 else
                     triple.parent().setRightChild(null);
@@ -185,21 +186,19 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
             currentSize --;
             return oldNode;
         }
-        // caso 2
         if (triple.node().getRightChild() == null || triple.node().getLeftChild() == null) {
 
             BTNode<Entry<K, V>> child = (BTNode<Entry<K, V>>) triple.node().getLeftChild();
             if (child == null) {
                 child = (BTNode<Entry<K, V>>) triple.node().getRightChild();
             }
-
+            child.setParent(triple.parent());
             if (triple.parent() == null) {
                 root = child;
 
             } else {
-                if (triple.cmp() < 0) {
+                if (triple.parent().getLeftChild()==triple.node()) {
                     triple.parent().setLeftChild(child);
-
                 } else {
                     triple.parent().setRightChild(child);
                 }
@@ -207,7 +206,6 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
             currentSize--;
             return oldNode;
         }
-        //caso 3
         if (triple.node().getLeftChild() != null && triple.node().getRightChild() != null){
 
             BTNode<Entry<K,V>> nodeLeft = (BTNode<Entry<K, V>>) triple.node().getLeftChild();
@@ -236,8 +234,8 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
 
     //Manual Serialization
     Iterator<Entry<K, V>> iteratorLevel() {
-//        return new BreadthIterator<>((BTNode<Entry<K,V>>)root);
-        return null;
+    return new BreadthIterator<>((BTNode<Entry<K,V>>)root);
+
     }
 
     void addElem(Entry<K, V> element) {
@@ -247,7 +245,7 @@ public class BSTree<K extends Comparable<K>,V> extends BTree<Entry<K,V>> impleme
     void writeData(ObjectOutputStream oos) throws IOException {
         oos.writeObject(comparator);
     }
-
+    @SuppressWarnings("unchecked")
     void readData(ObjectInputStream ois)
             throws IOException, ClassNotFoundException {
         comparator = (Comparator<K>) ois.readObject();

@@ -1,8 +1,5 @@
 package dataStructures;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serial;
+import java.io.*;
 
 /**
  * Hash Table
@@ -11,8 +8,9 @@ import java.io.Serial;
  * @param <K> Generic Key
  * @param <V> Generic Value
  */
- abstract class HashTable<K,V> implements Map<K,V>{
-
+ abstract class HashTable<K,V> implements Map<K,V>, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
      // Default size of the hash table.
      static final int DEFAULT_CAPACITY = 50;
      // Resize Factor
@@ -34,7 +32,6 @@ import java.io.Serial;
      // specified number; or zero if all such primes are greater
      // than Integer.MAX VALUE.
      protected static int nextPrime( int number ){
-         //TODO: Left as exercise
          for(int i = 0; i < PRIMES.length; i++){
              if (PRIMES[i] >= number) {
                  return PRIMES[i];

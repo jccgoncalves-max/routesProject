@@ -1,6 +1,9 @@
 package dataStructures;
 
 import dataStructures.exceptions.*;
+
+import java.io.Serializable;
+
 /**
  * Ordered Dictionary interface
  *
@@ -10,8 +13,8 @@ import dataStructures.exceptions.*;
  * @param <K> Generic type Key must extend comparable
  * @param <V> Generic type Value 
  */
-public interface SortedMap<K extends Comparable<K>, V>
-        extends Map<K,V> {
+public interface SortedMap<K extends Comparable< K>, V>
+        extends Map<K,V>, Serializable{
 
     /**
      * Returns the entry with the smallest key in the dictionary.

@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
  * @param <V> Generic Value
  */
 public class SepChainHashTable<K,V> extends HashTable<K,V> {
+    private static final long serialVersionUID = 1L;
 
     //Load factors
     static final float IDEAL_LOAD_FACTOR =0.75f;
@@ -24,7 +25,8 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     public SepChainHashTable( ){
         this(DEFAULT_CAPACITY);
     }
-    
+
+    @SuppressWarnings("unchecked")
    public SepChainHashTable( int capacity ){
        super();
        table = createTable(capacity);
@@ -43,7 +45,6 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     }
 
     private void rehash() {
-        //TODO: Left as an exercise.
      Set<Entry<K,V>>[] oldTable = table;
 
      table = createTable(table.length*FACTOR);
@@ -65,7 +66,7 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     }
     // Returns the hash value of the specified key.
     int hash( K key ){
-        return Math.abs( key.hashCode() ) % table.length;
+        return Math.abs(key.hashCode()) % table.length;
     }
     /**
      * If there is an entry in the dictionary whose key is the specified key,
@@ -77,7 +78,6 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public V get(K key) {
-        //TODO: Left as an exercise.
 
         int index = hash(key);
 
@@ -104,7 +104,6 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     public V put(K key, V value) {
         if (isFull())
             rehash();
-        //TODO: Left as an exercise.
 
         int index = hash(key);
 
@@ -137,7 +136,6 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public V remove(K key) {
-        //TODO: Left as an exercise.
 
         int index = hash(key);
         Entry<K,V> tmp = new Entry<>(key,null);
@@ -161,23 +159,18 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-       // return new SepChainHTIterator<>(table);
-        return null;
+        return new SepChainHTIterator<>(table);
     }
 
     void writeData(ObjectOutputStream oos)
             throws IOException {
-        //TODO: Left as an exercise.
         oos.writeInt(table.length);
     }
 
+    @SuppressWarnings("unchecked")
     void readData(ObjectInputStream ios)
             throws IOException, ClassNotFoundException {
-             //TODO: Left as an exercise.
-        //fixme:
-        //Lê a dimensão do vetor guardada no ficheiro
         int capacity = ios.readInt();
-        // Aloca o vetor e inicializa cada posição com um SetLinkedList vazio
         table = (Set<Entry<K,V>>[]) new Set[capacity];
         for (int i = 0; i < capacity; i++) {
             table[i] = new SetLinkedList<>();

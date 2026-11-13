@@ -82,8 +82,17 @@ abstract class SequenceLinkedList<E> extends LinkedList<E> implements List<E>{
      * @return position of the element in the list (or -1)
      */
     public int indexOf(E element) {
-        //TODO: Left as an exercise.
-        return 0;
+        LinkedNode<E> node = head;
+        int index = 0;
+        while (node != null){
+            if (node.getElement().equals(element)) {
+                return index;
+            }
+            node = node.getNext();
+            index++;
+        }
+
+        return  NOT_FOUND;
     }
 
     /**
@@ -201,6 +210,7 @@ abstract class SequenceLinkedList<E> extends LinkedList<E> implements List<E>{
     }
 
     void addElem(E element){
-        //TODO: Left as an exercise.
+        LinkedNode<E> newNode = new SinglyListNode<>(element,(null));
+        super.addLastNode(newNode);
     }
 }

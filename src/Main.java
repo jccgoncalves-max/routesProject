@@ -1,18 +1,16 @@
 /**
- * Lenine Semedo 73327 & João Gonçalves 73439
+ * Lenine Semedo 73327 & Joao Goncalves 73439
  */
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Scanner;
 import transportNetwork.*;
 import dataStructures.exceptions.*;
 import java.io.*;
-import java.util.*;
+import dataStructures.*;
 public class Main {
 
-    private static String FILE_NAME = "data.txt";
     private static String SERIALIZED_FILE_NAME = "file.dat";
     private static String TRANSPORTATION_RESTORED_SUCESS = "Transportation network restored successfully.";
     private static String TRANSPORTATION_NOT_FOUND = "Transportation network not found.";
@@ -262,8 +260,7 @@ public class Main {
             }else{
                 System.out.println(NO_SUITABLE_JOURNEY_MSG);
             }
-
-
+            
         }catch (InvalidStationException e){
             System.out.println(INVALID_STATION_MSG);
         }catch(InvalidTimeFormatException e){
@@ -297,10 +294,7 @@ public class Main {
      * @param tn Transport Network app
      */
     private static void quitCmd(Network tn) {
-        try{
             tn.storeCities(SERIALIZED_FILE_NAME);
-        } catch (RuntimeException e) {
-        }
         System.out.println(SAVED_TRANSPORTATION_APP_MSG);
         System.out.println(QUIT_MSG);
     }

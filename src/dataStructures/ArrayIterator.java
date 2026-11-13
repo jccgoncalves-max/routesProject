@@ -18,32 +18,45 @@ public class ArrayIterator<T> implements TwoWayIterator<T> {
 
 	@Override
 	public boolean hasPrevious() {
-		return false;
+		return (currentP>=0);
 	}
 
 	@Override
 	public T previous() throws NoSuchElementException {
-		return null;
+		if(!hasPrevious())
+			throw new NoSuchElementException();
+
+		int currentE = currentP;
+		currentN = currentE + 1;
+		currentP = currentN-DIFF;
+		return elems[currentE];
 	}
 
 	@Override
 	public void fullForward() {
-
+		this.currentN = counter;
+		this.currentP = counter-1;
 	}
 
 	@Override
 	public boolean hasNext() {
-		return false;
+		return currentN<counter;
 	}
 
 	@Override
 	public T next() throws NoSuchElementException {
-		return null;
+		if(!hasNext()) {
+			throw new NoSuchElementException();
+		}
+		int currentE = currentN;
+		currentP = currentE - 1;
+		currentN = currentP + DIFF;
+		return elems[currentE];
 	}
 
 	@Override
 	public void rewind() {
-
+		this.currentN = 0;
+		this.currentP = -1;
 	}
-	//TODO: Left as an exercise.
 }

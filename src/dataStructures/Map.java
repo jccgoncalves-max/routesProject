@@ -18,7 +18,7 @@ public interface Map<K,V> extends Serializable {
             if (this==obj) return true;
             if (!(obj instanceof Entry))
                 return false;
-            //noinspection unchecked
+            @SuppressWarnings("unchecked")
             K key=((Entry<K, V>)obj).key();
             return key().equals(key);
         }

@@ -8,8 +8,9 @@ public class SetLinkedList<E> extends LinkedList<E> implements Set<E> {
 
     @Override
     void addElem(E element) {
-        //TODO: Left as an exercise.
-        
+        if (!contains(element)) {
+            put(element);
+        }
     }
 
     /**
@@ -22,9 +23,15 @@ public class SetLinkedList<E> extends LinkedList<E> implements Set<E> {
      */
     @Override
     public E get(E element) {
-        //TODO: Left as an exercise.
-	return null;
-        
+        if (element == null) {
+            return null;
+        }
+        pairNode<E> pair = nodeOf(element);
+        if (pair == null) {
+            return null;
+        }
+        return pair.node().getElement();
+
     }
 
     /**
@@ -49,9 +56,14 @@ public class SetLinkedList<E> extends LinkedList<E> implements Set<E> {
      * @return true if insert the element, otherwise false
      */
     public boolean put(E element){
-        //TODO: Left as an exercise.
-        
+        if (element == null || contains(element)) {
+            return false;
+        }
+        addLastNode(new SinglyListNode<>(element));
+        invariant();
         return true;
+
+
     }
 
     /**
@@ -64,9 +76,19 @@ public class SetLinkedList<E> extends LinkedList<E> implements Set<E> {
      */
     @Override
     public E replace(E element) {
-        //TODO: Left as an exercise.
-        
-        return null;
+
+        if (element == null) {
+            return null;
+        }
+        pairNode<E> pair = nodeOf(element);
+        if (pair == null) {
+            return null;
+        }
+        LinkedNode<E> node = pair.node();
+        E oldElement = node.getElement();
+        node.setElement(element);
+        invariant();
+        return oldElement;
     }
 
     /**
@@ -80,18 +102,49 @@ public class SetLinkedList<E> extends LinkedList<E> implements Set<E> {
      */
     @Override
     public E remove(E element) {
-        //TODO: Left as an exercise.
-        
-        return null;
+
+        if (element == null) {
+            return null;
+        }
+        pairNode<E> pair = nodeOf(element);
+        if (pair == null) {
+            return null;
+        }
+        if (pair.prev() == null) {
+            E removedElem = removeFirstNode();
+            invariant();
+            return removedElem;
+
+        }
+        if (pair.node() == tail) {
+            E removedElem = removeLastNode(pair);
+            invariant();
+            return removedElem;
+        }
+        E removedElem = pair.node().getElement();
+        removeMiddleNode(pair);
+        invariant();
+        return removedElem;
     }
 
-    
+
     private void invariant(){
         assert allDif();
     }
 
     private boolean allDif() {
-        
+
+        LinkedNode<E> current = head;
+        while (current != null) {
+            LinkedNode<E> runner = current.getNext();
+            while (runner != null) {
+                if (current.getElement().equals(runner.getElement())) {
+                    return false;
+                }
+                runner = runner.getNext();
+            }
+            current = current.getNext();
+        }
         return true;
     }
 }

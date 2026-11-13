@@ -1,4 +1,7 @@
 package dataStructures;
+
+import java.io.Serializable;
+
 /**
  * Linked Node (with next)
  *
@@ -7,7 +10,7 @@ package dataStructures;
  *
  * @param <E> Generic Element
  */
-interface LinkedNode<E> extends InfoNode<E> {
+interface LinkedNode<E> extends InfoNode<E>, Serializable {
     /**
      *
      * @return

@@ -1,11 +1,11 @@
 package transportNetwork;
 
 import dataStructures.exceptions.*;
-
+import dataStructures.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.*;
+
 import java.time.*;
 
 import java.io.*;
@@ -14,7 +14,8 @@ import java.io.*;
  */
 public class NetworkClass implements Network,Serializable{
     private static final long serialVersionUID = 1L;
-    private final static DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);//todo: Pesquisar sobre o método
+
+    private final static DateTimeFormatter TIME_FORMAT  = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
     /**
      * Sequence of stations
      */
@@ -22,26 +23,21 @@ public class NetworkClass implements Network,Serializable{
     /**
      * Collection of journeys
      */
-    private Map<String,Journey> journeys;//todo: HashMap vai devolver um iterador que percorre por ordem(para serialização);
-    /**
-     * Structure to serialize the train station.
-     */
-  //  private List<Station> serializedLine;
+    private Map<String,Journey> journeys;
 
 
     /**
      * Train Network constructor
      */
     public NetworkClass(){
-     journeys = new HashMap<>(20);
-     line = new HashMap<>(20);
-   //  serializedLine = new LinkedList<>();
+     journeys = new SepChainHashTable<>(100);
+     line = new SepChainHashTable<>(100);
 
     }
 
     @Override
     public boolean hasJourney(String id){
-        return journeys.containsKey(id.toLowerCase());
+        return journeys.get(id.toLowerCase()) != null;
     }
 
 
@@ -74,7 +70,8 @@ public class NetworkClass implements Network,Serializable{
     @Override
     public Ticket findJourney(String departureStation, String arrivalStation, String passengerTime) throws InvalidStationException,
             InvalidTimeFormatException, InvalidStationOrderException {
-        if(!line.containsKey(departureStation.toLowerCase())||!line.containsKey(arrivalStation.toLowerCase()))
+
+        if(line.get(departureStation.toLowerCase()) == null || line.get(arrivalStation.toLowerCase()) == null)
             throw new InvalidStationException();
 
         LocalTime time = getLocalTime(passengerTime);
@@ -93,7 +90,10 @@ public class NetworkClass implements Network,Serializable{
     public Ticket findJourneyMinStops(String departureStation, String arrivalStation, String miniumTime, String maximumTime)throws InvalidStationException,
             InvalidTimeFormatException, InvalidStationOrderException, InvalideTimeException {
 
-        if (!line.containsKey(departureStation.toLowerCase()) || !line.containsKey(arrivalStation.toLowerCase())){
+        Station depStation = line.get(departureStation.toLowerCase());
+        Station arrStation = line.get(arrivalStation.toLowerCase());
+
+        if (depStation == null || arrStation== null){
             throw  new InvalidStationException();
         }
         LocalTime minTime = getLocalTime(miniumTime);
@@ -106,12 +106,11 @@ public class NetworkClass implements Network,Serializable{
             throw new InvalideTimeException();
         }
 
-        if (line.get(departureStation.toLowerCase()).getLinePosition() >= line.get(arrivalStation.toLowerCase()).getLinePosition() ){
+        if (depStation.getLinePosition() >= arrStation.getLinePosition() ){
             throw new InvalidStationOrderException();
         }
 
-        Station station = line.get(departureStation.toLowerCase());
-        return station.getSuitableJourneyMinStops(arrivalStation,minTime,maxTime);
+        return depStation.getSuitableJourneyMinStops(arrivalStation,minTime,maxTime);
     }
 
     @Override
@@ -120,8 +119,10 @@ public class NetworkClass implements Network,Serializable{
         if (journey == null){
             return false;
         }
-        for (Stops stop : journey.getStops()) {
-            stop.getStation().removeJourney(journey);
+
+        Iterator<Stops> it = journey.getStops().iterator();
+        while (it.hasNext()) {
+            it.next().getStation().removeJourney(journey);
         }
         return true;
     }
@@ -130,7 +131,7 @@ public class NetworkClass implements Network,Serializable{
     @Override
     public void addStation(String nameStation) {
         String key = nameStation.toLowerCase();
-        if (!line.containsKey(key)) {
+        if (line.get(key) == null) {
             int position = line.size();
             Station station = new StationClass(nameStation, position);
             line.put(key, station);

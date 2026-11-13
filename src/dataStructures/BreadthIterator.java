@@ -10,20 +10,19 @@ import dataStructures.exceptions.NoSuchElementException;
  */
 
 /**
- *  Explicação sobre a classe: o iterador da arvore funciona por niveis o root no nivel 1 os filhos da root nivel 2 etc
- *  o iterador avança da esquerda para a direita então como a queue é FIFO a ideia é ler e colocar na queue que é so devolver
+
  *
  */
 
 class BreadthIterator<E> implements Iterator<E> {
 
-    private Queue<BTNode<E>> queue; //
+    private Queue<BTNode<E>> queue;
     private BTNode<E> root;
 
 
     public BreadthIterator(BTNode<E> root) {
         this.root = root;
-        rewind(); // inicia a queue na rewind para evitar repetir codigo
+        rewind();
     }
     @Override
     public boolean hasNext() {

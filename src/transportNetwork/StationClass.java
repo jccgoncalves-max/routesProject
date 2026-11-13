@@ -1,7 +1,7 @@
 package transportNetwork;
 import java.io.Serializable;
 import java.time.*;
-import java.util.*;
+import dataStructures.*;
 /**
  * Represents a station on the line.
  */
@@ -28,7 +28,7 @@ public class StationClass implements Station , Serializable {
     protected StationClass(String name,int linePosition) {
         this.name = name;
         this.linePosition = linePosition;
-        stationsOrderedByHour = new TreeMap<>();
+        stationsOrderedByHour = new BSTree<>();
     }
 
     @Override
@@ -38,15 +38,26 @@ public class StationClass implements Station , Serializable {
 
     @Override
     public Ticket getSuitableJourney(String arrivalStation, LocalTime passengerTime) {
-        for(Map.Entry<LocalTime, List<Journey>> e : stationsOrderedByHour.tailMap(passengerTime).entrySet()){
-            for(Journey journey : e.getValue()){
-                Stops destinationStop = journey.getStop(arrivalStation);
-                if(destinationStop != null)
-                    return new Ticket(journey,this,journey.getStop(name).getDepartureTime(),
-                            destinationStop.getStation(),destinationStop.getArrivalTime(),0);
+        Iterator<Map.Entry<LocalTime,List<Journey>>> it = stationsOrderedByHour.iterator();
+        while (it.hasNext()){
+            Map.Entry<LocalTime, List<Journey>> entry = it.next();
+            if (!entry.key().isBefore(passengerTime)){
+               Iterator<Journey> journeyIterator = entry.value().iterator();
+               while (journeyIterator.hasNext()){
+               Journey journey = journeyIterator.next();
+               Stops destinationStop = journey.getStop(arrivalStation);
+
+               if (destinationStop != null) {
+
+                   return new Ticket(journey,this,journey.getStop(name).getDepartureTime(),
+                           destinationStop.getStation(),destinationStop.getArrivalTime(),0);
+                 }
+               }
+
             }
         }
-        return null;
+
+      return null;
     }
     @Override
     public int getLinePosition() {
@@ -57,25 +68,27 @@ public class StationClass implements Station , Serializable {
     public void addDeparture(LocalTime time, Journey journey){
         List<Journey> journeyList = stationsOrderedByHour.get(time);
         if(journeyList  == null){
-            journeyList = new LinkedList<>();
+            journeyList = new SinglyLinkedList<>();
             stationsOrderedByHour.put(time,journeyList);
         }
-        journeyList.add(journey);
+        journeyList.addLast(journey);
     }
 
     @Override
     public Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime, LocalTime maxTime) {
         Journey bestJourney = null;
-        Iterator<Map.Entry<LocalTime,List<Journey>>> it = stationsOrderedByHour.tailMap(minTime).entrySet().iterator();
+        Iterator<Map.Entry<LocalTime,List<Journey>>> it = stationsOrderedByHour.iterator();
         boolean withinInterval = true;
 
         while (it.hasNext() && withinInterval) {
             Map.Entry<LocalTime, List<Journey>> entry = it.next();
 
-            if (entry.getKey().isAfter(maxTime)) {
+            if (entry.key().isAfter(maxTime)) {
                 withinInterval = false;
-            } else {
-                for (Journey journey : entry.getValue()) {
+            } else if (!entry.key().isBefore(minTime)){
+                Iterator<Journey> jIt = entry.value().iterator();
+                while (jIt.hasNext()) {
+                    Journey journey = jIt.next();
                     Stops arrivalStop = journey.getStop(arrivalStation);
                     Stops departureStop = journey.getStop(this.name);
 
@@ -86,12 +99,11 @@ public class StationClass implements Station , Serializable {
                     }
                 }
             }
-        }
 
+        }
         if (bestJourney == null) {
             return null;
         }
-
         return createTicket(bestJourney, arrivalStation);
     }
 
@@ -104,7 +116,10 @@ public class StationClass implements Station , Serializable {
 
             List<Journey> list = stationsOrderedByHour.get(depTime);
             if (list != null) {
-                list.remove(journey);
+                int index = list.indexOf(journey);
+                if (index != -1) {
+                    list.remove(index);
+                }
 
                 if (list.isEmpty()) {
                     stationsOrderedByHour.remove(depTime);
@@ -112,8 +127,6 @@ public class StationClass implements Station , Serializable {
             }
         }
     }
-
-
 
 
     /**
@@ -136,13 +149,13 @@ public class StationClass implements Station , Serializable {
         if (currentStops != bestStops) {
             return currentStops < bestStops;
         }
-        //chegada mais cedo
+
         LocalTime currentArrTime = currentArr.getArrivalTime();
         LocalTime bestArrTime = bestArr.getArrivalTime();
         if (!currentArrTime.equals(bestArrTime)) {
             return currentArrTime.isBefore(bestArrTime);
         }
-        //partida mais cedo
+
         LocalTime currentDepTime = currentDep.getDepartureTime();
         LocalTime bestDepTime = bestDep.getDepartureTime();
         if (!currentDepTime.equals(bestDepTime)) {

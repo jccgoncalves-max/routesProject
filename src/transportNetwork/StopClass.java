@@ -7,6 +7,8 @@ import java.time.LocalTime;
  * Represents each stop of a Journey.
  */
 public class StopClass implements Stops, Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Station that references the stop
      */

@@ -1,4 +1,7 @@
 package dataStructures;
+
+import java.io.Serial;
+
 /**
  * Binary Tree
  * @author AED  Team
@@ -6,7 +9,10 @@ package dataStructures;
  * @param <E> Generic Element
  */
 abstract class BTree<E> extends LinkedTree<E> {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unchecked")
     public BTree(){
       super();
     }
@@ -25,7 +31,6 @@ abstract class BTree<E> extends LinkedTree<E> {
      * @return
      */
     BTNode<E> furtherLeftElement() {
-        //TODO: Left as an exercise.
         if( root == null)
             return null;
 
@@ -44,7 +49,6 @@ abstract class BTree<E> extends LinkedTree<E> {
      * @return
      */
     BTNode<E> furtherRightElement() {
-        //TODO: Left as an exercise.
         if (root == null)
             return null;
 

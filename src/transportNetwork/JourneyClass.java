@@ -2,8 +2,7 @@ package transportNetwork;
 
 import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.*;
-
+import dataStructures.*;
 /**
  * Represents a Journey taken over the train line.
  */
@@ -20,7 +19,7 @@ public class JourneyClass implements Journey, Serializable {
     /**
      * Journey's sequence of stops.
      */
-    private ArrayList<Stops> stopsSequence;
+    private List<Stops> stopsSequence;
     /**
      * Journey ticket
      */
@@ -32,12 +31,12 @@ public class JourneyClass implements Journey, Serializable {
      */
     protected JourneyClass(String id){
         this.id = id;
-        stopsSequence = new ArrayList<>();
+        stopsSequence = new ArrayClass<>();
     }
 
     @Override
     public void addStop(Stops newStop) {
-        stopsSequence.add(newStop);
+        stopsSequence.addLast(newStop);
     }
 
     @Override
@@ -58,16 +57,18 @@ public class JourneyClass implements Journey, Serializable {
 
 
     @Override
-    public Stops getStop(String stationName){
-        for(Stops stop : stopsSequence){
-            if(stop.getStation().getName().equalsIgnoreCase(stationName))
-                return stop;
+    public Stops getStop(String stationName) {
+
+        Iterator<Stops> it = stopsSequence.iterator();
+        while (it.hasNext()) {
+            Stops stops = it.next();
+            if (stops.getStation().getName().equalsIgnoreCase(stationName))
+                return stops;
         }
         return null;
     }
-
     @Override
-    public ArrayList<Stops> getStops(){
+    public List<Stops> getStops(){
         return stopsSequence;
     }
 

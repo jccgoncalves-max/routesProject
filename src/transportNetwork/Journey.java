@@ -2,8 +2,7 @@ package transportNetwork;
 
 import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.ArrayList;
-
+import dataStructures.*;
 public interface Journey extends Serializable {
     /**
      * Adds a new stop to the journey
@@ -53,7 +52,7 @@ public interface Journey extends Serializable {
      *
      * @return
      */
-    ArrayList<Stops> getStops();
+    List<Stops> getStops();
 
 
 }

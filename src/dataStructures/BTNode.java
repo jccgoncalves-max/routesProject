@@ -1,5 +1,6 @@
 package dataStructures;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -9,6 +10,8 @@ import java.io.Serializable;
  * @param <E> Generic Element
  */
 class BTNode<E> implements InfoNode<E>, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     // Element stored in the node.
     private E element;
     // (Pointer to) the father.
@@ -22,6 +25,7 @@ class BTNode<E> implements InfoNode<E>, Serializable {
      * Constructor
      * @param elem
      */
+    @SuppressWarnings("unchecked")
     BTNode(E elem){
         this(elem,null,null,null);
     }
@@ -31,6 +35,7 @@ class BTNode<E> implements InfoNode<E>, Serializable {
      * @param elem
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     BTNode(E elem, BTNode<E> parent) {
         this(elem,parent,null,null);
     }
@@ -41,6 +46,8 @@ class BTNode<E> implements InfoNode<E>, Serializable {
      * @param leftChild
      * @param rightChild
      */
+
+    @SuppressWarnings("unchecked")
     BTNode(E elem, BTNode<E> parent, BTNode<E> leftChild, BTNode<E> rightChild){
         element=elem;
         this.parent=parent;
@@ -116,7 +123,7 @@ class BTNode<E> implements InfoNode<E>, Serializable {
      */
 
     int getHeight() {
-        //TODO: Left as an exercise.
+
         int leftHeight = -1;
         int rightHeight = -1;
 
@@ -135,7 +142,6 @@ class BTNode<E> implements InfoNode<E>, Serializable {
      * @return
      */
     BTNode<E> furtherLeftElement() {
-        //TODO: Left as an exercise.
         BTNode<E> current = this;
         while(current.getLeftChild() != null){
             current = (BTNode<E>) current.getLeftChild();
@@ -144,7 +150,6 @@ class BTNode<E> implements InfoNode<E>, Serializable {
     }
 
     BTNode<E> furtherRightElement() {
-       //TODO: Left as an exercise.
         BTNode<E> current = this;
         while(current.getRightChild() != null){
             current = (BTNode<E>) current.getRightChild();
