@@ -2,7 +2,9 @@ package transportNetwork;
 
 
 import java.io.Serializable;
-
+/**
+ * Represents the transport network, managing stations and journeys.
+ */
 public interface Network extends Serializable {
     /**
      * Checks if journey with given id already exist
@@ -42,21 +44,21 @@ public interface Network extends Serializable {
     Ticket findJourneyMinStops(String departureStation,String arrivalStation,String minimumTime,String maximumTime);
 
     /**
-     *
-     * @param nameStation
+     * Adds a new station to the transport network line.
+     * @param nameStation name of the station to be added
      */
     void addStation(String nameStation); // usado na leitura do ficheiro
 
     /**
-     *
-     * @param journeyId
-     * @return
+     * Removes the journey with the given identifier from the network.
+     * @param journeyId identifier of the journey to remove /
+     * @return true if the journey existed and was removed, false otherwise
      */
     boolean removeJourney(String journeyId);
 
     /**
-     *
-     * @param fileName
+     * Saves the current state of the transport network to a file
+     * @param fileName name of the file where the network will be stored
      */
     void storeCities(String fileName);
 

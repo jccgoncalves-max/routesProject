@@ -3,6 +3,9 @@ package transportNetwork;
 import java.io.Serializable;
 import java.time.LocalTime;
 
+/**
+ * Represents a stop made by a journey at a specific station.
+ */
 public interface Stops extends Serializable {
     /**
      * Returns stop station
@@ -24,7 +27,7 @@ public interface Stops extends Serializable {
 
     /**
      * Returns stop arrival time
-     * @return
+     * @return stop arrival time
      */
     LocalTime getArrivalTime();
 }

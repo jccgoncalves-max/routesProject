@@ -3,7 +3,11 @@ import java.io.Serializable;
 import java.time.*;
 import dataStructures.*;
 /**
- * Represents a station on the line.
+ * Represents a station on the train line, managing its scheduled departures
+ * and suitable journey searches.
+ * Space Complexity:
+ * O(n) - Stores the station name and line position in O(1) space, plus a binary search tree
+ * (BSTree) of singly linked lists indexing all n journeys departing from this station.
  */
 public class StationClass implements Station , Serializable {
     private static final long serialVersionUID = 1L;
@@ -21,7 +25,11 @@ public class StationClass implements Station , Serializable {
     private SortedMap<LocalTime,List<Journey>>stationsOrderedByHour;
 
     /**
-     * Station Constructor
+     * Time Complexity:
+     * Best Case: O(1) - Assigns station attributes and initializes an empty BSTree in constant time without loops.
+     * Worst Case: O(1) - Constant time initialization.
+     * Station Constructor.
+     *
      * @param name Station unique name
      * @param linePosition Station line position
      */
@@ -31,11 +39,29 @@ public class StationClass implements Station , Serializable {
         stationsOrderedByHour = new BSTree<>();
     }
 
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Direct attribute access in constant time.
+     * Worst Case: O(1) - Direct attribute access without loops.
+     * Returns the unique name of the station.
+     *
+     * @return station name
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Root has no left child, its departure time is at or after passengerTime, and the first journey contains arrivalStation and this station at the start of its stops list.
+     * Worst Case: O(n^2) - Traverses all n departures in the schedule and scans all n stops of each journey via getStop without finding an earlier match.
+     * Finds the earliest journey departing at or after passengerTime that stops at arrivalStation.
+     *
+     * @param arrivalStation name of the destination station
+     * @param passengerTime earliest acceptable departure time
+     * @return ticket for the first suitable journey found, or null if none exists
+     */
     @Override
     public Ticket getSuitableJourney(String arrivalStation, LocalTime passengerTime) {
         Iterator<Map.Entry<LocalTime,List<Journey>>> it = stationsOrderedByHour.iterator();
@@ -59,11 +85,28 @@ public class StationClass implements Station , Serializable {
 
       return null;
     }
+
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Direct attribute access in constant time.
+     * Worst Case: O(1) - Direct attribute access without loops.
+     * Returns the sequential position of the station on the line.
+     *
+     * @return station line position
+     */
     @Override
     public int getLinePosition() {
             return linePosition;
         }
-
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Tree is empty or the departure time matches the root node, appending the journey to the tail of the list in constant time.
+     * Worst Case: O(n) - Traverses down the height n of the BSTree to find or insert the departure time
+     * Registers a journey departure at the specified time for this station.
+     *
+     * @param time scheduled departure time
+     * @param journey journey departing at the given time
+     */
     @Override
     public void addDeparture(LocalTime time, Journey journey){
         List<Journey> journeyList = stationsOrderedByHour.get(time);
@@ -73,7 +116,17 @@ public class StationClass implements Station , Serializable {
         }
         journeyList.addLast(journey);
     }
-
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Tree is empty or the root has no left child and its departure time is already after maxTime, terminating immediately.
+     * Worst Case: O(n^2) - All n departures fall within the [minTime, maxTime] window, requiring getStop and betterJourney to scan all n stops of each journey.
+     * Finds the journey with the fewest stops between this station and arrivalStation within the given time interval.
+     *
+     * @param arrivalStation name of the destination station
+     * @param minTime earliest acceptable departure time
+     * @param maxTime latest acceptable departure time
+     * @return ticket for the best matching journey, or null if none is found
+     */
     @Override
     public Ticket getSuitableJourneyMinStops(String arrivalStation, LocalTime minTime, LocalTime maxTime) {
         Journey bestJourney = null;
@@ -106,7 +159,14 @@ public class StationClass implements Station , Serializable {
         }
         return createTicket(bestJourney, arrivalStation);
     }
-
+    /**
+     * Time Complexity:
+     * Best Case: O(1) - Finds this station at the first stop of the journey, locates the departure time at the root of the BSTree, and removes the journey from the head of the list in constant time.
+     * Worst Case: O(n) - Scans all n stops of the journey via getStop, traverses a skewed BSTree of height n, and searches/removes the journey linearly across up to n entries in the list.
+     * Removes a journey from this station's departure schedule.
+     *
+     * @param journey journey to be removed
+     */
     @Override
     public void removeJourney(Journey journey) {
         Stops stop = journey.getStop(this.name);
@@ -130,11 +190,15 @@ public class StationClass implements Station , Serializable {
 
 
     /**
+     * Time Complexity:
+     * Best Case: O(n) - Unconditionally traverses all n stops of both journeys inside getStopsCountBetween to compare stop counts.
+     * Worst Case: O(n) - Scans all n stops of both journeys via getStop and getStopsCountBetween to compare stop counts, arrival times, and departure times.
+     * Compares two candidate journeys to determine whether the current journey is preferable to the best one found so far.
      *
-     * @param current
-     * @param best
-     * @param arrivalStation
-     * @return
+     * @param current candidate journey being evaluated
+     * @param best best journey found so far
+     * @param arrivalStation name of the destination station
+     * @return true if current is better than best, false otherwise
      */
     private boolean betterJourney(Journey current, Journey best, String arrivalStation) {
 
@@ -165,10 +229,14 @@ public class StationClass implements Station , Serializable {
     }
 
     /**
+     * Time Complexity:
+     * Best Case: O(n) - Unconditionally iterates through all n stops of bestJourney in getStopsCountBetween to compute the stop count.
+     * Worst Case: O(n) - Scans all n stops of bestJourney via getStop and getStopsCountBetween before instantiating and attaching the ticket.
+     * Creates and attaches a ticket to the selected best journey between this station and the arrival station.
      *
-     * @param bestJourney
-     * @param arrivalStation
-     * @return
+     * @param bestJourney selected optimal journey
+     * @param arrivalStation name of the destination station
+     * @return created Ticket object for the journey
      */
     private Ticket createTicket(Journey bestJourney, String arrivalStation) {
 

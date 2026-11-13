@@ -1,6 +1,3 @@
-/**
- * Lenine Semedo 73327 & Joao Goncalves 73439
- */
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +6,17 @@ import transportNetwork.*;
 import dataStructures.exceptions.*;
 import java.io.*;
 import dataStructures.*;
+
+/**
+ * Main class of the Transportation Network application.
+ * Handles command-line input/output, file loading, and command execution.
+ * Space Complexity:
+ * O(1) - Main itself stores only a fixed set of static String constants and local references
+ * without dynamic collections
+ *
+ * @author Lenine Semedo 73327 & Joao Goncalves 73439
+ */
+
 public class Main {
 
     private static String SERIALIZED_FILE_NAME = "file.dat";
@@ -29,8 +37,6 @@ public class Main {
     private static String INVALID_STATION_ORDER_MSG = "Stations are not in the correct order.";
     private static String STOPS_JOURNEY_PRINT_MSG = "Stops: %d\n";
     private static String INVALIDE_INTERVAL_TIME ="Invalid interval time.";
-    private static String INVALID_JOURNEY_MSG = "Invalid journey.";
-    private static String REMOVED_JOURNEY_MSG = "Journey successfully removed.";
     private static String JOURNEY_SUCCESSFULY_REMOVE = "Journey successfully removed.";
     private static String INVALID_JOURNEY ="Invalid journey.";
     private static String SAVED_TRANSPORTATION_APP_MSG = "Transportation network saved.";
@@ -56,10 +62,14 @@ public class Main {
     }
 
     /**
+     * Time Complexity:
+     * Best case: O(1) - Constant if the file does not exist //fixme
+     * - Worst case: O(n) - Linear because it uses a loop that reads n elements.
      *
-     * @param fileName
-     * @return
-     * @throws FileNotFoundException
+     * Reads the line definition from a text file and registers all stations in the network.
+     * @param fileName path to the line definition file
+     * @return initialized with loaded stations, or null if the file is not found
+     * @throws FileNotFoundException if the file cannot be opened
      */
     private static Network readFile(String fileName) throws FileNotFoundException {
         try (Scanner reader = new Scanner(new File(fileName))){
@@ -103,7 +113,7 @@ public class Main {
         }
 
         /**
-         *
+         * Prints the description of every available command.
          */
         private void executeHelp() {
             for (int i = 0; i < Command.values().length; i++) {
@@ -161,10 +171,13 @@ public class Main {
     }
 
     /**
-     * Inserts a new journey into the transportation network.
+     * Time Complexity:
+     * Best Case: O(K) - Reads all K stops from input in a loop, checks hasJourney in O(1) (no hash collisions), and either skips insertion if the journey already exists or inserts all K stops in O(1) each via addJourney.
+     * Worst Case: O(n^2) - Reads all n stops, incurs O(n) hash collisions in hasJourney, and executes addJourney where each of the n stops may face O(n) collisions in line, O(n) traversal in a skewed station departure tree, and O(n^2) if journeys triggers a rehash with collisions.
+     * Executes the addJourney command, reading journey details and inserting the new journey into the network.
      *
-     * @param in Scanner input
-     * @param tn Transport Network
+     * @param in Scanner reading user input
+     * @param tn Transport Network instance
      */
     private static void addJourneyCmd(Scanner in, Network tn) {
         String journeyId = in.nextLine().trim();
@@ -204,10 +217,13 @@ public class Main {
     }
 
     /**
-     * Finds the earliest journey that allows a passenger to travel from the origin station to the destination station
-     * w/o any transfers.
-     * @param in Scanner in
-     * @param tn Transport network app
+     * Time Complexity:
+     * Best Case: O(1) - Validation fails immediately, or hash lookups in line resolve in O(1) and the first departure at the root of the station's schedule reaches arrivalStation at the first stop checked.
+     * Worst Case: O(n^2) - All n stations collide in the hash table (O(n)) and all n departures at the departure station must be checked in a skewed tree while scanning up to n stops per journey.
+     * Executes the findJourney command, finding and printing the earliest direct journey from the origin station to the destination station.
+     *
+     * @param in Scanner reading user input
+     * @param tn Transport Network instance
      */
     private static void findJourneyCmd(Scanner in, Network tn) {
         try {
@@ -235,11 +251,13 @@ public class Main {
     }
 
     /**
-     * Finds the journey with the minimum number of stops that allows a passenger to travel from the
-     * origin station to the destination station without making any transfers within a specified time
-     * interval.
-     * @param in Scanner input
-     * @param tn Transport Network app
+     * Time Complexity:
+     * Best Case: O(1) - Validation fails early in constant time, or hash lookups resolve in O(1) with no departures falling within the specified time interval.
+     * Worst Case: O(n^2) - All n stations collide in the hash table (O(n)) and all n departures fall within the time window, scanning up to n stops per journey to find the minimum stop count.
+     * Executes the findJourneyMinStops command, finding and printing the direct journey with the fewest intermediate stops within a time interval.
+     *
+     * @param in Scanner reading user input
+     * @param tn Transport Network instance
      */
     private static void findJourneyMinStopsCmd(Scanner in, Network tn){
         try {
@@ -274,9 +292,13 @@ public class Main {
     }
 
     /**
-     * Removes the journey with the given identifier from the transportation network.
-     * @param in Scanner input
-     * @param tn Transport Network app
+     * Time Complexity:
+     * Best Case: O(1) - Journey identifier is not found in the hash table (with no collisions), returning false immediately in constant time.
+     * Worst Case: O(n^2) - Hash bucket has n collisions when removing the journey O(n), and iterating through all n stops requires O(n) traversal in each station's departure tree and departure list to remove the journey.
+     * Executes the removeJourney command, removing the specified journey from the transportation network.
+     *
+     * @param in Scanner reading user input
+     * @param tn Transport Network instance
      */
     private static void removeCmd(Scanner in, Network tn) {
 
@@ -290,8 +312,12 @@ public class Main {
     }
 
     /**
-     * Terminates program execution
-     * @param tn Transport Network app
+     * Time Complexity:
+     * Best Case: O(1) - Network is empty or opening the output stream fails immediately in constant time.
+     * Worst Case: O(n^2) - Serializes the entire network state to the file, traversing all n stations, n journeys, and their n stops and departures.
+     * Executes the quit command, saving the transportation network state and terminating execution.
+     *
+     * @param tn Transport Network instance
      */
     private static void quitCmd(Network tn) {
             tn.storeCities(SERIALIZED_FILE_NAME);

@@ -3,6 +3,9 @@ package transportNetwork;
 import java.io.Serializable;
 import java.time.LocalTime;
 import dataStructures.*;
+/**
+ * Represents a journey taken over the transport network line.
+ */
 public interface Journey extends Serializable {
     /**
      * Adds a new stop to the journey
@@ -49,8 +52,8 @@ public interface Journey extends Serializable {
     int getStopsCountBetween(String originStation, String destinationStation);
 
     /**
-     *
-     * @return
+     * Returns the sequence of stops of the journey.
+     * @return list of stops in the journey
      */
     List<Stops> getStops();
 
